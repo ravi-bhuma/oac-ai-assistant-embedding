@@ -23,6 +23,12 @@ pre .oid{color:#4ade80;font-weight:600;background:rgba(74,222,128,0.08);padding:
 .topbar-brand-oracle{color:var(--accent);font-weight:800}
 .topbar-brand-sep{color:var(--text-3);font-weight:300;margin:0 .15rem}
 .topbar-nav{display:flex;align-items:center;gap:.25rem}
+.topbar-row2{display:flex;justify-content:center;gap:.45rem;padding:.4rem 2rem .5rem;border-top:1px solid var(--border-1);transition:border-color .25s}
+.ql{display:inline-flex;align-items:center;gap:.35rem;padding:.35rem .85rem;font-size:.76rem;font-weight:600;color:var(--text-3);background:var(--bg-2);border:1px solid var(--border-1);border-radius:100px;text-decoration:none;transition:all .25s;white-space:nowrap}
+.ql:hover{border-color:var(--accent);color:var(--accent);background:rgba(199,70,52,.08)}
+.ql.on{border-color:var(--accent);color:var(--accent-light);background:rgba(199,70,52,.12);font-weight:700}
+.ql-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);flex-shrink:0}
+
 .theme-toggle{width:36px;height:36px;border-radius:8px;border:1px solid var(--border-1);background:var(--bg-2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s;flex-shrink:0}.theme-toggle:hover{border-color:var(--border-2);background:var(--bg-3)}
 .theme-toggle .icon-sun{display:none}.theme-toggle .icon-moon{display:block}[data-theme="light"] .theme-toggle .icon-sun{display:block}[data-theme="light"] .theme-toggle .icon-moon{display:none}
 
@@ -59,7 +65,7 @@ h1{font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.5rem}
 
 footer{text-align:center;padding:2rem;border-top:1px solid var(--border-1);color:var(--text-3);font-size:.78rem;transition:border-color var(--transition)}
 
-@media(max-width:768px){.content{padding:2rem 1.5rem 3rem}.topbar-inner{padding:0 1rem}}
+@media(max-width:768px){.topbar-row2{gap:.25rem;padding:.35rem 1rem;overflow-x:auto;-webkit-overflow-scrolling:touch}.topbar-row2 .ql{font-size:.7rem;padding:.3rem .55rem}.content{padding:2rem 1.5rem 3rem}.topbar-inner{padding:0 1rem}}
 </style>
 </head>
 <body>
@@ -77,6 +83,13 @@ footer{text-align:center;padding:2rem;border-top:1px solid var(--border-1);color
         <span class="icon-moon">&#127769;</span>
       </button>
     </div>
+  </div>
+  <div class="topbar-row2">
+    <a href="quickstart.html" class="ql on"><span class="ql-dot"></span>Quick Start</a>
+    <a href="setup.html" class="ql"><span class="ql-dot"></span>Setup Guide</a>
+    <a href="security.html" class="ql"><span class="ql-dot"></span>Security Deep-Dive</a>
+    <a href="exercises.html" class="ql"><span class="ql-dot"></span>Hands-On Exercises</a>
+    <a href="reference.html" class="ql"><span class="ql-dot"></span>Reference &amp; Resources</a>
   </div>
 </header>
 
