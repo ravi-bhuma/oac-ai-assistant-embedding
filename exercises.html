@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,7 +9,7 @@
 <style>
 :root{--bg-primary:#0a0e1a;--bg-secondary:#111827;--bg-card:#1a2236;--bg-card-hover:#1f2a42;--accent-oracle:#c74634;--accent-gold:#f59e0b;--accent-blue:#3b82f6;--accent-green:#10b981;--accent-purple:#8b5cf6;--accent-cyan:#06b6d4;--text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#1e293b;--border-accent:#334155;--code-bg:#0f172a;--font-body:'Plus Jakarta Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);line-height:1.7}a{color:var(--accent-blue);text-decoration:none;transition:color .2s}a:hover{color:var(--accent-cyan)}
-.topnav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;align-items:center;justify-content:space-between}.topnav-brand{font-weight:700;font-size:.9rem;color:var(--text-primary)}.topnav-brand span{color:var(--accent-oracle)}.topnav-links{display:flex;gap:1.5rem;font-size:.82rem}.topnav-links a{color:var(--text-muted)}.topnav-links a:hover{color:var(--text-primary)}.topnav-links a.active{color:var(--accent-oracle)}
+
 .page-header{padding:3rem 2rem 2rem;max-width:900px;margin:0 auto}.page-header .module-label{font-family:var(--font-mono);font-size:.7rem;color:var(--accent-oracle);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem}.page-header h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.75rem}.page-header .subtitle{font-size:1rem;color:var(--text-secondary);max-width:700px}
 .content{max-width:900px;margin:0 auto;padding:0 2rem 4rem}
 h2{font-size:1.4rem;font-weight:700;margin:2.5rem 0 1rem;padding-top:1.5rem;border-top:1px solid var(--border)}h3{font-size:1.1rem;font-weight:700;margin:1.5rem 0 .75rem}p,li{font-size:.92rem;color:var(--text-secondary);margin-bottom:.6rem}ul,ol{padding-left:1.5rem;margin-bottom:1rem}
@@ -21,20 +21,33 @@ code{font-family:var(--font-mono);font-size:.84em;background:var(--code-bg);bord
 
 .pagination{display:flex;justify-content:space-between;padding:2rem 0;border-top:1px solid var(--border);margin-top:2rem}.pagination a{display:flex;flex-direction:column;gap:.2rem;padding:.75rem 1.25rem;border:1px solid var(--border);border-radius:10px;transition:all .2s;font-size:.85rem}.pagination a:hover{border-color:var(--border-accent);background:var(--bg-card)}.pagination a small{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
 footer{text-align:center;padding:2rem;border-top:1px solid var(--border);color:var(--text-muted);font-size:.78rem}
-@media(max-width:768px){.topnav{padding:.75rem 1rem}.topnav-links{gap:.75rem;font-size:.75rem}.page-header,.content{padding-left:1.5rem;padding-right:1.5rem}}
+@media(max-width:768px){.page-header,.content{padding-left:1.5rem;padding-right:1.5rem}}
 </style>
 </head>
 <body>
 
-<nav class="topnav">
-  <a href="index.html" class="topnav-brand"><span>OAC</span> Embedding Workshop</a>
-  <div class="topnav-links">
-    <a href="setup.html">Setup</a>
-    <a href="security.html">Security</a>
-    <a href="exercises.html" class="active">Exercises</a>
-    <a href="reference.html">Reference</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="topbar-brand">
+      <span class="topbar-brand-oracle">Oracle Analytics</span>
+      <span class="topbar-brand-sep">|</span>
+      Embedding the Oracle Analytics AI Assistant
+    </a>
+    <div class="topbar-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon-sun">&#9728;&#65039;</span>
+        <span class="icon-moon">&#127769;</span>
+      </button>
+    </div>
   </div>
-</nav>
+  <div class="topbar-row2">
+    <a href="quickstart.html" class="ql"><span class="ql-dot"></span>Quick Start</a>
+    <a href="setup.html" class="ql"><span class="ql-dot"></span>Setup Guide</a>
+    <a href="security.html" class="ql"><span class="ql-dot"></span>Security Deep-Dive</a>
+    <a href="exercises.html" class="ql on"><span class="ql-dot"></span>Hands-On Exercises</a>
+    <a href="reference.html" class="ql"><span class="ql-dot"></span>Reference & Resources</a>
+  </div>
+</header>
 
 <header class="page-header">
   <div class="module-label">Module 03</div>
@@ -54,14 +67,14 @@ footer{text-align:center;padding:2rem;border-top:1px solid var(--border);color:v
 <h3>Your Configuration Values</h3>
 <p>These values will be used throughout the labs. Replace them with your own environment details:</p>
 <pre><code>OAC Instance URL:   https://&lt;your-oac-host&gt;.analytics.ocp.oraclecloud.com
-OAC User:           your.name@company.com
+OAC User:           &lt;your-oac-user&gt;
 Dataset Name:       Your_Dataset_Name
 Local Test Port:    8000</code></pre>
 
 <h3>Instructions</h3>
 <ol>
   <li>Create a new folder on your desktop called <code>oac-workshop</code>.</li>
-  <li>Using your text editor, create a file named <code>oac-ai-assistant.html</code> and build it following the six steps from <a href="setup.html">Module 01: Quick-Start Setup (setup.html)</a>.</li>
+  <li>Using your text editor, create a file named <code>oac-ai-assistant.html</code> and build it following the six steps from <a href="setup.html">Module 01: Setup Guide (setup.html)</a>.</li>
   <li>Open a terminal, navigate to the folder, and start the Python server:
 <pre><code><span class="comment"># Windows:</span>
 cd C:\Users\YourName\Desktop\oac-workshop
@@ -330,7 +343,7 @@ srv.serve_forever()
 </main>
 
 <footer>
-  OAC AI Assistant Embedding Workshop &mdash; Ravi Bhuma
+  Embedding the Oracle Analytics AI Assistant &mdash; Ravi Bhuma
 </footer>
 
 </body>

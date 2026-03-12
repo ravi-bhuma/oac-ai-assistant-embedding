@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,13 +32,7 @@ html { scroll-behavior: smooth; }
 body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; }
 a { color: var(--accent-blue); text-decoration: none; transition: color 0.2s; }
 a:hover { color: var(--accent-cyan); }
-.topnav { position: sticky; top: 0; z-index: 100; background: rgba(10,14,26,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; }
-.topnav-brand { font-weight: 700; font-size: 0.9rem; color: var(--text-primary); }
-.topnav-brand span { color: var(--accent-oracle); }
-.topnav-links { display: flex; gap: 1.5rem; font-size: 0.82rem; }
-.topnav-links a { color: var(--text-muted); }
-.topnav-links a:hover { color: var(--text-primary); }
-.topnav-links a.active { color: var(--accent-oracle); }
+
 .page-header { padding: 3rem 2rem 2rem; max-width: 900px; margin: 0 auto; }
 .page-header .module-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-oracle); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem; }
 .page-header h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
@@ -93,8 +87,11 @@ pre code { background: none; border: none; padding: 0; }
 .pagination a small { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
 footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.78rem; }
 @media (max-width: 768px) {
-  .topnav { padding: 0.75rem 1rem; }
-  .topnav-links { gap: 0.75rem; font-size: 0.75rem; }
+  .topbar-inner{padding:0 1rem}
+  .topbar-row2{gap:.3rem;padding:.4rem 1rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .topbar-row2 .ql{font-size:.72rem;padding:.32rem .6rem}
+  
+  
   .page-header, .content { padding-left: 1.5rem; padding-right: 1.5rem; }
   .flow-row { flex-direction: column; }
 }
@@ -102,15 +99,28 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border);
 </head>
 <body>
 
-<nav class="topnav">
-  <a href="index.html" class="topnav-brand"><span>OAC</span> Embedding Workshop</a>
-  <div class="topnav-links">
-    <a href="setup.html">Setup</a>
-    <a href="security.html" class="active">Security</a>
-    <a href="exercises.html">Exercises</a>
-    <a href="reference.html">Reference</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="topbar-brand">
+      <span class="topbar-brand-oracle">Oracle Analytics</span>
+      <span class="topbar-brand-sep">|</span>
+      Embedding the Oracle Analytics AI Assistant
+    </a>
+    <div class="topbar-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon-sun">&#9728;&#65039;</span>
+        <span class="icon-moon">&#127769;</span>
+      </button>
+    </div>
   </div>
-</nav>
+  <div class="topbar-row2">
+    <a href="quickstart.html" class="ql"><span class="ql-dot"></span>Quick Start</a>
+    <a href="setup.html" class="ql"><span class="ql-dot"></span>Setup Guide</a>
+    <a href="security.html" class="ql on"><span class="ql-dot"></span>Security Deep-Dive</a>
+    <a href="exercises.html" class="ql"><span class="ql-dot"></span>Hands-On Exercises</a>
+    <a href="reference.html" class="ql"><span class="ql-dot"></span>Reference & Resources</a>
+  </div>
+</header>
 
 <header class="page-header">
   <div class="module-label">Module 02</div>
@@ -309,7 +319,7 @@ footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border);
   <ul>
     <li>Create a dedicated OAC user (e.g., <code>embedding-svc@yourcompany.com</code>).</li>
     <li>Assign only the minimum required OAC role — typically <strong>DV Content Author</strong> or a custom role with only the <strong>Use Assistant in Workbooks</strong> permission.</li>
-    <li>Grant access only to the specific datasets or subject areas that should be publicly visible.</li>
+    <li>Grant access only to the specific datasets that should be publicly visible.</li>
     <li>Never use a personal admin account for token generation.</li>
   </ul>
 </div>
@@ -519,7 +529,7 @@ curl --request POST \
 <div class="pagination">
   <a href="setup.html">
     <small>&#8592; Previous</small>
-    <span>Quick-Start Setup</span>
+    <span>Setup Guide</span>
   </a>
   <a href="exercises.html" style="text-align:right;">
     <small>Next &#8594;</small>
@@ -530,7 +540,7 @@ curl --request POST \
 </main>
 
 <footer>
-  OAC AI Assistant Embedding Workshop &mdash; Ravi Bhuma
+  Embedding the Oracle Analytics AI Assistant &mdash; Ravi Bhuma
 </footer>
 
 </body>

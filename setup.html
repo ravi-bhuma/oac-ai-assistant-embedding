@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Module 01: Quick-Start Setup — OAC AI Assistant Embedding</title>
+<title>Module 01: Setup Guide — OAC AI Assistant Embedding</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -34,33 +34,12 @@ body {
   background: var(--bg-primary);
   color: var(--text-primary);
   line-height: 1.7;
+  transition: background 0.25s ease, color 0.25s ease;
 }
 a { color: var(--accent-blue); text-decoration: none; transition: color 0.2s; }
 a:hover { color: var(--accent-cyan); }
 
 /* Top nav */
-.topnav {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: rgba(10,14,26,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 1px solid var(--border);
-  padding: 0.75rem 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.topnav-brand {
-  font-weight: 700;
-  font-size: 0.9rem;
-  color: var(--text-primary);
-}
-.topnav-brand span { color: var(--accent-oracle); }
-.topnav-links { display: flex; gap: 1.5rem; font-size: 0.82rem; }
-.topnav-links a { color: var(--text-muted); }
-.topnav-links a:hover { color: var(--text-primary); }
-.topnav-links a.active { color: var(--accent-oracle); }
 
 /* Page header */
 .page-header {
@@ -143,6 +122,7 @@ pre .tag { color: #f472b6; }
 pre .attr { color: #a78bfa; }
 pre .string { color: #34d399; }
 pre .keyword { color: #60a5fa; }
+pre .oid { color: #4ade80; font-weight: 600; background: rgba(74,222,128,0.08); padding: 0.1rem 0.25rem; border-radius: 3px; }
 
 /* Callout boxes */
 .callout {
@@ -216,27 +196,43 @@ footer {
   font-size: 0.78rem;
 }
 @media (max-width: 768px) {
-  .topnav { padding: 0.75rem 1rem; }
-  .topnav-links { gap: 0.75rem; font-size: 0.75rem; }
+  .topbar-inner{padding:0 1rem}
+  .topbar-row2{gap:.3rem;padding:.4rem 1rem;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .topbar-row2 .ql{font-size:.72rem;padding:.32rem .6rem}
+  
+  
   .page-header, .content { padding-left: 1.5rem; padding-right: 1.5rem; }
 }
 </style>
 </head>
 <body>
 
-<nav class="topnav">
-  <a href="index.html" class="topnav-brand"><span>OAC</span> Embedding Workshop</a>
-  <div class="topnav-links">
-    <a href="setup.html" class="active">Setup</a>
-    <a href="security.html">Security</a>
-    <a href="exercises.html">Exercises</a>
-    <a href="reference.html">Reference</a>
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="topbar-brand">
+      <span class="topbar-brand-oracle">Oracle Analytics</span>
+      <span class="topbar-brand-sep">|</span>
+      Embedding the Oracle Analytics AI Assistant
+    </a>
+    <div class="topbar-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon-sun">&#9728;&#65039;</span>
+        <span class="icon-moon">&#127769;</span>
+      </button>
+    </div>
   </div>
-</nav>
+  <div class="topbar-row2">
+    <a href="quickstart.html" class="ql"><span class="ql-dot"></span>Quick Start</a>
+    <a href="setup.html" class="ql on"><span class="ql-dot"></span>Setup Guide</a>
+    <a href="security.html" class="ql"><span class="ql-dot"></span>Security Deep-Dive</a>
+    <a href="exercises.html" class="ql"><span class="ql-dot"></span>Hands-On Exercises</a>
+    <a href="reference.html" class="ql"><span class="ql-dot"></span>Reference & Resources</a>
+  </div>
+</header>
 
 <header class="page-header">
   <div class="module-label">Module 01</div>
-  <h1>Quick-Start Setup</h1>
+  <h1>Setup Guide</h1>
   <p class="subtitle">Build a working embedded OAC AI Assistant from a blank file to a running page in six steps. No frameworks, no build tools — just a text editor and Python.</p>
 </header>
 
@@ -349,18 +345,49 @@ footer {
     <span class="step-num">Step 4</span>
     <h2>Embed the AI Assistant</h2>
   </div>
-  <p>This is the main event. A single custom tag — <code>&lt;oracle-analytics-assistant&gt;</code> — tells OAC to draw its AI chat panel on your page.</p>
-  <p>Add the following inside your <code>&lt;body&gt;</code>:</p>
-<pre><code><span class="tag">&lt;oracle-analytics-assistant</span>
-  <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
-  <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('&lt;user&gt;'.'&lt;dataset-name&gt;')&amp;quot;]"</span><span class="tag">&gt;</span>
-<span class="tag">&lt;/oracle-analytics-assistant&gt;</span></code></pre>
+  <p>Add the <code>&lt;oracle-analytics-assistant&gt;</code> tag inside your <code>&lt;body&gt;</code>. The <code>src-data</code> attribute tells the Assistant which data source to connect to.</p>
 
-  <p><strong>Understanding <code>src-data</code>:</strong> The value decodes to <code>XSA('user'.'dataset')</code> where the first part is the OAC user who owns the dataset and the second is the dataset name. The <code>&amp;quot;</code> codes are HTML-escaped double quotes — the browser converts them automatically.</p>
+  <div class="callout callout-danger">
+    <span class="callout-icon">⚠️</span>
+    <div><strong>Your data source must be indexed for search in OAC</strong> before it can be used with the embedded AI Assistant. If the data source is not indexed, the Assistant will not be able to query it.</div>
+  </div>
+
+  <p>The format of <code>src-data</code> depends on your data source type. In each example below, the <span style="color:#4ade80;font-weight:600;">green highlighted portion</span> is the <strong>Object ID</strong> — this is the part you replace with your own value.</p>
+
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.25rem 0;">
+    <p style="margin-bottom: 0.75rem;"><strong>RPD Subject Area</strong> — the Object ID is the plain display name</p>
+<pre><code><span class="tag">&lt;oracle-analytics-assistant</span>
+  <span class="attr">src-data</span>="[&amp;quot;<span class="oid">A - Sample Sales</span>&amp;quot;]"<span class="tag">&gt;</span>
+<span class="tag">&lt;/oracle-analytics-assistant&gt;</span></code></pre>
+  </div>
+
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.25rem 0;">
+    <p style="margin-bottom: 0.75rem;"><strong>File-based Dataset</strong> — the Object ID contains the owner + dataset name (check your Inspect panel)</p>
+<pre><code><span class="tag">&lt;oracle-analytics-assistant</span>
+  <span class="attr">src-data</span>="[&amp;quot;XSA('<span class="oid">&lt;owner&gt;</span>'.'<span class="oid">&lt;dataset-name&gt;</span>')&amp;quot;]"<span class="tag">&gt;</span>
+<span class="tag">&lt;/oracle-analytics-assistant&gt;</span></code></pre>
+  </div>
+
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem 1.5rem; margin: 1.25rem 0;">
+    <p style="margin-bottom: 0.75rem;"><strong>Local Subject Area (LSA)</strong> — the Object ID is a system GUID + LSA name</p>
+<pre><code><span class="tag">&lt;oracle-analytics-assistant</span>
+  <span class="attr">src-data</span>="[&amp;quot;XSA('<span class="oid">abda89d7-e772-4efa-b715-6e7c250b0201</span>'.'<span class="oid">SampleSalesDS</span>')&amp;quot;]"<span class="tag">&gt;</span>
+<span class="tag">&lt;/oracle-analytics-assistant&gt;</span></code></pre>
+  </div>
+
+  <h3>How to Find Your Object ID</h3>
+  <p>Every data source in OAC has an Object ID. Here’s how to find it:</p>
+  <ol>
+    <li>In OAC, navigate to <strong>Data</strong> and locate your dataset or subject area.</li>
+    <li>Right-click (or use the action menu) and select <strong>Inspect</strong>.</li>
+    <li>In the Inspect panel, look for the <strong>Object ID</strong> field — this is the value you need.</li>
+    <li>Copy it and use it as the <span style="color:#4ade80;font-weight:600;">green highlighted</span> placeholder in the examples above.</li>
+  </ol>
+  <p>Alternatively, open any workbook that uses the data source and check the browser URL — the <code>subjectareas=</code> parameter contains the full reference.</p>
 
   <div class="callout callout-warn">
-    <span class="callout-icon">&#9888;&#65039;</span>
-    <div><strong>Do not</strong> remove the <code>&amp;quot;</code> entities or replace them with regular double quotes — that will break the attribute parsing. Also ensure the dataset name matches exactly (case-sensitive) what appears in OAC.</div>
+    <span class="callout-icon">⚠️</span>
+    <div><strong>Always wrap values in <code>&amp;quot;</code></strong> — especially for names with spaces or special characters. Do not replace <code>&amp;quot;</code> with regular double quotes in the HTML. The <code>id</code> attribute on the tag is optional — only needed if you need JavaScript access to the element.</div>
   </div>
 </section>
 
@@ -596,12 +623,18 @@ python3 -m http.server 8000</code></pre>
 
   <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1rem 0;">
     <p style="margin-bottom: 1rem;"><strong>3. Place the assistant tag in your page</strong></p>
-    <p>Drop it into any <code>&lt;div&gt;</code> container in your existing page layout — a sidebar, a tab panel, a modal, or a dedicated section.</p>
-<pre><code><span class="comment">&lt;!-- Inside your existing page layout --&gt;</span>
+    <p>Drop it into any <code>&lt;div&gt;</code> container in your existing page layout — a sidebar, a tab panel, a modal, or a dedicated section. Use the appropriate <code>src-data</code> format for your data source type (see <a href="#step4">Step 4</a> above).</p>
+<pre><code><span class="comment">&lt;!-- RPD Subject Area --&gt;</span>
 <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"your-assistant-container"</span><span class="tag">&gt;</span>
   <span class="tag">&lt;oracle-analytics-assistant</span>
-    <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
-    <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('&lt;user&gt;'.'&lt;dataset&gt;')&amp;quot;]"</span><span class="tag">&gt;</span>
+    <span class="attr">src-data</span>=<span class="string">"[&amp;quot;A - Sample Sales&amp;quot;]"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="comment">&lt;!-- Or for a file-based Dataset --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"your-assistant-container"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;oracle-analytics-assistant</span>
+    <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('&lt;owner&gt;'.'&lt;dataset-name&gt;')&amp;quot;]"</span><span class="tag">&gt;</span>
   <span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
 <span class="tag">&lt;/div&gt;</span></code></pre>
   </div>
@@ -647,7 +680,7 @@ python3 -m http.server 8000</code></pre>
 </main>
 
 <footer>
-  OAC AI Assistant Embedding Workshop &mdash; Ravi Bhuma
+  Embedding the Oracle Analytics AI Assistant &mdash; Ravi Bhuma
 </footer>
 
 </body>

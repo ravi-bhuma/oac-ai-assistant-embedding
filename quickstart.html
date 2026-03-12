@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quick Start — Embedding the Oracle Analytics AI Assistant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--font-body:'Plus Jakarta Sans',system-ui,sans-serif;--font-mono:'JetBrains Mono','Fira Code',monospace;--accent:#c74634;--accent-light:#e06b5e;--accent-glow:rgba(199,70,52,0.15);--blue:#3b82f6;--green:#10b981;--gold:#f59e0b;--purple:#8b5cf6;--cyan:#06b6d4;--radius:14px;--radius-sm:8px;--transition:0.25s ease}
+[data-theme="dark"]{--bg-0:#06090f;--bg-1:#0c1019;--bg-2:#141a2a;--bg-3:#1c2538;--bg-hover:#212d45;--text-1:#f0f4f8;--text-2:#94a3b8;--text-3:#5a6a82;--border-1:#1a2236;--border-2:#283348;--code-bg:#0a0f1a;--card-shadow:0 4px 24px rgba(0,0,0,0.3)}
+[data-theme="light"]{--bg-0:#ffffff;--bg-1:#f8f9fb;--bg-2:#f0f2f5;--bg-3:#e8ecf0;--bg-hover:#e0e5eb;--text-1:#1a1f2e;--text-2:#4a5568;--text-3:#8594a7;--border-1:#e2e8f0;--border-2:#cbd5e1;--code-bg:#f1f5f9;--card-shadow:0 2px 12px rgba(0,0,0,0.06)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-body);background:var(--bg-0);color:var(--text-1);line-height:1.7;-webkit-font-smoothing:antialiased;transition:background var(--transition),color var(--transition)}a{color:var(--blue);text-decoration:none;transition:color .2s}a:hover{color:var(--cyan)}
+code{font-family:var(--font-mono);font-size:0.84em;background:var(--code-bg);border:1px solid var(--border-1);padding:0.12rem 0.4rem;border-radius:4px;color:var(--accent-light);transition:background var(--transition),border-color var(--transition)}
+pre{background:var(--code-bg);border:1px solid var(--border-1);border-radius:10px;padding:1.25rem 1.5rem;overflow-x:auto;margin:1rem 0;font-family:var(--font-mono);font-size:0.8rem;line-height:1.7;color:var(--text-2);transition:background var(--transition),border-color var(--transition)}
+pre code{background:none;border:none;padding:0;color:inherit}
+pre .oid{color:#4ade80;font-weight:600;background:rgba(74,222,128,0.08);padding:0.1rem 0.25rem;border-radius:3px}
+
+/* Topbar */
+.topbar{position:sticky;top:0;z-index:200;background:var(--bg-1);border-bottom:1px solid var(--border-1);backdrop-filter:blur(16px);transition:background var(--transition),border-color var(--transition)}
+.topbar-inner{max-width:1200px;margin:0 auto;padding:0 2rem;height:52px;display:flex;align-items:center;justify-content:space-between}
+.topbar-brand{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:.88rem;color:var(--text-1);text-decoration:none;white-space:nowrap}
+.topbar-brand-oracle{color:var(--accent);font-weight:800}
+.topbar-brand-sep{color:var(--text-3);font-weight:300;margin:0 .15rem}
+.topbar-nav{display:flex;align-items:center;gap:.25rem}
+.theme-toggle{width:36px;height:36px;border-radius:8px;border:1px solid var(--border-1);background:var(--bg-2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .2s;flex-shrink:0}.theme-toggle:hover{border-color:var(--border-2);background:var(--bg-3)}
+.theme-toggle .icon-sun{display:none}.theme-toggle .icon-moon{display:block}[data-theme="light"] .theme-toggle .icon-sun{display:block}[data-theme="light"] .theme-toggle .icon-moon{display:none}
+
+/* Content */
+.content{max-width:800px;margin:0 auto;padding:2.5rem 2rem 4rem}
+.back-link{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;color:var(--text-3);margin-bottom:1.5rem;transition:color .2s}.back-link:hover{color:var(--accent)}
+.qs-badge{display:inline-block;font-family:var(--font-mono);font-size:.68rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:.1em;padding:.2rem .55rem;background:rgba(245,158,11,.1);border-radius:5px;margin-bottom:.75rem}
+h1{font-size:1.8rem;font-weight:800;letter-spacing:-.02em;margin-bottom:.5rem}
+.subtitle{font-size:.95rem;color:var(--text-2);margin-bottom:2rem;max-width:640px}
+
+/* Steps */
+.step{margin-bottom:2.5rem}
+.step-header{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem}
+.step-num{width:28px;height:28px;border-radius:50%;background:var(--accent);color:#fff;font-size:.78rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step h2{font-size:1.1rem;font-weight:700}
+.step p{font-size:.9rem;color:var(--text-2);margin-bottom:.5rem}
+
+/* Table */
+.fmt-table{width:100%;border-collapse:collapse;margin:1rem 0;font-size:.84rem;border:1px solid var(--border-1);border-radius:10px;overflow:hidden;transition:border-color var(--transition)}
+.fmt-table th,.fmt-table td{padding:.6rem .8rem;text-align:left;border-bottom:1px solid var(--border-1);transition:background var(--transition)}
+.fmt-table th{background:var(--bg-2);font-weight:600;font-size:.74rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-3)}
+.fmt-table td{color:var(--text-2)}
+.fmt-table tbody tr:last-child td{border-bottom:none}
+.fmt-table tbody tr:hover td{background:var(--bg-3)}
+
+/* Callout */
+.callout{border-radius:var(--radius);padding:1rem 1.2rem;margin:1.5rem 0;font-size:.86rem;line-height:1.6;display:flex;gap:.7rem;align-items:flex-start;transition:background var(--transition),border-color var(--transition)}
+.callout-icon{font-size:1rem;flex-shrink:0;line-height:1.6}
+.callout-warn{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.15);color:var(--text-2)}
+.callout-info{background:rgba(59,130,246,.06);border:1px solid rgba(59,130,246,.12);color:var(--text-2)}
+
+/* Pagination */
+.pagination{display:flex;justify-content:space-between;padding-top:2rem;border-top:1px solid var(--border-1);margin-top:2rem}.pagination a{display:flex;flex-direction:column;gap:.2rem;padding:.6rem 1rem;border:1px solid var(--border-1);border-radius:10px;transition:all .2s;font-size:.85rem;text-decoration:none;color:inherit}.pagination a:hover{border-color:var(--border-2);background:var(--bg-2)}.pagination a small{font-size:.68rem;color:var(--text-3);text-transform:uppercase;letter-spacing:.08em}
+
+footer{text-align:center;padding:2rem;border-top:1px solid var(--border-1);color:var(--text-3);font-size:.78rem;transition:border-color var(--transition)}
+
+@media(max-width:768px){.content{padding:2rem 1.5rem 3rem}.topbar-inner{padding:0 1rem}}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="index.html" class="topbar-brand">
+      <span class="topbar-brand-oracle">Oracle Analytics</span>
+      <span class="topbar-brand-sep">|</span>
+      Embedding the Oracle Analytics AI Assistant
+    </a>
+    <div class="topbar-nav">
+      <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+        <span class="icon-sun">&#9728;&#65039;</span>
+        <span class="icon-moon">&#127769;</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="content">
+
+<a href="index.html" class="back-link">&#8592; Back to Guide</a>
+
+<span class="qs-badge">Quick Start</span>
+<h1>Copy, Paste, Embed</h1>
+<p class="subtitle">Three code snippets to embed the OAC AI Assistant into your existing web application. Replace the placeholder values with your OAC instance details and you're live.</p>
+
+<!-- STEP 1 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">1</div>
+    <h2>Add the embedding library to your <code>&lt;head&gt;</code></h2>
+  </div>
+  <p>This loads the OAC embedding framework from your instance. It does not conflict with other libraries.</p>
+<pre><code>&lt;script
+  src="https://&lt;your-oac-host&gt;/public/dv/v2/embedding/auto/embedding.js"&gt;
+&lt;/script&gt;</code></pre>
+</div>
+
+<div class="callout callout-warn">
+  <span class="callout-icon">⚠️</span>
+  <div><strong>Your data source must be indexed for search</strong> in OAC before the embedded AI Assistant can query it.</div>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">2</div>
+    <h2>Add the AI Assistant tag to your page</h2>
+  </div>
+  <p>Place this wherever you want the Assistant to appear. The <span style="color:#4ade80;font-weight:600;">green highlighted portion</span> is the <strong>Object ID</strong> — replace it with your own value from the dataset's Inspect panel.</p>
+
+<pre><code>&lt;!-- RPD Subject Area --&gt;
+&lt;oracle-analytics-assistant
+  src-data="[&amp;quot;<span class="oid">A - Sample Sales</span>&amp;quot;]"&gt;
+&lt;/oracle-analytics-assistant&gt;</code></pre>
+
+<pre><code>&lt;!-- File-based Dataset --&gt;
+&lt;oracle-analytics-assistant
+  src-data="[&amp;quot;XSA('<span class="oid">&lt;owner&gt;</span>'.'<span class="oid">&lt;dataset-name&gt;</span>')&amp;quot;]"&gt;
+&lt;/oracle-analytics-assistant&gt;</code></pre>
+
+<pre><code>&lt;!-- Local Subject Area (LSA) --&gt;
+&lt;oracle-analytics-assistant
+  src-data="[&amp;quot;XSA('<span class="oid">&lt;GUID&gt;</span>'.'<span class="oid">&lt;lsa-name&gt;</span>')&amp;quot;]"&gt;
+&lt;/oracle-analytics-assistant&gt;</code></pre>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">&#128161;</span>
+    <div><strong>How to find the Object ID:</strong> In OAC, navigate to <strong>Data</strong>, locate your dataset or subject area, right-click and select <strong>Inspect</strong>. The <strong>Object ID</strong> field in the Inspect panel is the value you use as the <span style="color:#4ade80;font-weight:600;">green highlighted</span> placeholder above.</div>
+  </div>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+  <div class="step-header">
+    <div class="step-num">3</div>
+    <h2>Initialize (after the assistant tag)</h2>
+  </div>
+  <p>This activates all OAC embedded components on the page. Place it after the <code>&lt;oracle-analytics-assistant&gt;</code> tag.</p>
+<pre><code>&lt;script&gt;
+  oracle.oa.embedding.ready()
+    .then(oApp =&gt; oApp.applyBindings());
+&lt;/script&gt;</code></pre>
+</div>
+
+<!-- REMINDERS -->
+<div class="callout callout-warn">
+  <span class="callout-icon">&#9888;&#65039;</span>
+  <div><strong>Safe Domains:</strong> Your hosting domain must be registered in OAC under <strong>Console &#8594; Administration &#8594; Safe Domains</strong> with the <strong>Embedding</strong> checkbox enabled. Without this, the Assistant will be blocked by CORS.</div>
+</div>
+
+<div class="callout callout-info">
+  <span class="callout-icon">&#128274;</span>
+  <div><strong>Authentication:</strong> The code above uses browser-based (session) auth — users must be logged into OAC. For token-based auth (no login required), see <a href="security.html">Security Deep-Dive</a>.</div>
+</div>
+
+<div class="callout callout-info">
+  <span class="callout-icon">&#128196;</span>
+  <div><strong>CSS tip:</strong> Add <code>display: block; width: 100%; height: 100%;</code> to the <code>oracle-analytics-assistant</code> element to control its size within your layout.</div>
+</div>
+
+<div class="pagination">
+  <a href="index.html"><small>&#8592; Back to</small><span>Guide Home</span></a>
+  <a href="setup.html" style="text-align:right;"><small>Full walkthrough &#8594;</small><span>Setup Guide</span></a>
+</div>
+
+</main>
+
+<footer>
+  Embedding the Oracle Analytics AI Assistant &mdash; Ravi Bhuma
+</footer>
+
+<script>
+function toggleTheme(){
+  const h=document.documentElement;
+  const t=h.getAttribute('data-theme')==='dark'?'light':'dark';
+  h.setAttribute('data-theme',t);
+  localStorage.setItem('theme',t);
+}
+(function(){const s=localStorage.getItem('theme');if(s)document.documentElement.setAttribute('data-theme',s)})();
+</script>
+</body>
+</html>

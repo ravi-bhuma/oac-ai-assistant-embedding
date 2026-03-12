@@ -62,7 +62,7 @@
    RESET & BASE
    ================================================================ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; scroll-padding-top: 70px; }
+html { scroll-behavior: smooth; scroll-padding-top: 95px; }
 body {
   font-family: var(--font-body);
   background: var(--bg-0);
@@ -129,25 +129,6 @@ code {
   align-items: center;
   gap: 0.25rem;
 }
-.topbar-link {
-  color: var(--text-3);
-  font-size: 0.78rem;
-  font-weight: 500;
-  padding: 0.32rem 0.65rem;
-  border-radius: 6px;
-  transition: all 0.2s;
-  white-space: nowrap;
-}
-.topbar-link:hover { color: var(--text-1); background: var(--bg-2); }
-.topbar-link.page { color: var(--text-2); font-weight: 600; }
-.topbar-link.page:hover { color: var(--accent); background: var(--accent-glow); }
-.topbar-sep {
-  width: 1px;
-  height: 18px;
-  background: var(--border-1);
-  margin: 0 0.35rem;
-  flex-shrink: 0;
-}
 /* Theme toggle */
 .theme-toggle {
   width: 36px;
@@ -169,6 +150,19 @@ code {
 .theme-toggle .icon-moon { display: block; }
 [data-theme="light"] .theme-toggle .icon-sun { display: block; }
 [data-theme="light"] .theme-toggle .icon-moon { display: none; }
+.topbar-row2 {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.45rem 2rem 0.55rem;
+  border-top: 1px solid var(--border-1);
+  transition: border-color var(--transition);
+}
+.topbar-row2 .ql { animation: floatPill 3s ease-in-out infinite; }
+.topbar-row2 .ql:nth-child(1) { animation-delay: 0s; }
+.topbar-row2 .ql:nth-child(2) { animation-delay: 0.4s; }
+.topbar-row2 .ql:nth-child(3) { animation-delay: 0.8s; }
+.topbar-row2 .ql:nth-child(4) { animation-delay: 1.2s; }
 
 /* ================================================================
    HERO
@@ -176,7 +170,7 @@ code {
 .hero {
   position: relative;
   overflow: hidden;
-  padding: 5rem 2rem 3.5rem;
+  padding: 3rem 2rem 2.5rem;
   text-align: center;
   background: var(--hero-grad);
   transition: background var(--transition);
@@ -262,62 +256,64 @@ code {
 }
 
 /* ================================================================
-   INTRO BOX
+   QUICK START LINK
    ================================================================ */
-.intro-wrap { max-width: 880px; margin: 0 auto; padding: 3rem 2rem 1.5rem; position: relative; z-index: 1; }
-.intro-box {
-  background: var(--bg-2);
-  border: 1px solid var(--border-1);
-  border-radius: var(--radius);
-  padding: 2.5rem;
+.qs-link-wrap {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 1.5rem 2rem 0.5rem;
   position: relative;
-  overflow: hidden;
-  transition: background var(--transition), border-color var(--transition);
+  z-index: 1;
 }
-.intro-box::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent), var(--blue), var(--accent));
-}
-.intro-box h2 { font-size: 1.35rem; font-weight: 700; margin-bottom: 1rem; }
-.intro-box p { font-size: 0.94rem; color: var(--text-2); margin-bottom: 0.75rem; line-height: 1.75; }
-.intro-box p:last-of-type { margin-bottom: 0; }
-.intro-stats {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.qs-link-card {
+  display: flex;
+  align-items: center;
   gap: 1rem;
-  margin-top: 1.75rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border-1);
+  background: var(--bg-2);
+  border: 1px solid rgba(245,158,11,0.2);
+  border-radius: var(--radius);
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
 }
-.intro-stat { text-align: center; }
-.intro-stat-val {
+.qs-link-card:hover {
+  border-color: var(--gold);
+  background: rgba(245,158,11,0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 20px rgba(245,158,11,0.08);
+}
+.qs-badge {
+  display: inline-block;
   font-family: var(--font-mono);
-  font-size: 1.7rem;
-  font-weight: 700;
-  color: var(--accent-light);
-  line-height: 1;
-}
-.intro-stat-lbl {
-  font-size: 0.7rem;
-  color: var(--text-3);
-  margin-top: 0.35rem;
+  font-size: 0.66rem;
+  font-weight: 600;
+  color: var(--gold);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.1em;
+  padding: 0.2rem 0.55rem;
+  background: rgba(245,158,11,0.1);
+  border-radius: 5px;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
+.qs-link-text {
+  font-size: 0.88rem;
+  color: var(--text-2);
+  flex-grow: 1;
+}
+.qs-link-text strong { color: var(--text-1); }
+.qs-link-arrow {
+  font-size: 1.1rem;
+  color: var(--gold);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.qs-link-card:hover .qs-link-arrow { transform: translateX(3px); }
 
 /* ================================================================
    QUICK-LINK PILLS
    ================================================================ */
-.quick-links {
-  display: flex;
-  justify-content: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
-  margin-top: 1.75rem;
-}
 .ql {
   display: inline-flex;
   align-items: center;
@@ -366,7 +362,7 @@ code {
    ================================================================ */
 .modules-wrap {
   max-width: 1100px;
-  margin: 2rem auto 2.5rem;
+  margin: 1.5rem auto 2rem;
   padding: 0 2rem;
   position: relative;
   z-index: 1;
@@ -660,11 +656,10 @@ footer {
    ================================================================ */
 @media(max-width:1024px) { .mod-grid { grid-template-columns: repeat(2,1fr); } }
 @media(max-width:768px) {
-  .hero { padding: 3.5rem 1.5rem 2.5rem; }
+  .hero { padding: 2rem 1.5rem 1.75rem; }
   .mod-grid { grid-template-columns: 1fr; }
   .hero-pills { gap: 0.5rem; }
   .fg.c3,.fg.c2 { grid-template-columns: 1fr; }
-  .intro-box { padding: 1.75rem; }
   .iflow:not(.vert) { flex-direction: column; }
   .ic { transform: rotate(90deg); width: 22px; height: 32px; }
   .is { min-width: unset; width: 100%; }
@@ -672,9 +667,9 @@ footer {
   .arch-tab { font-size: .74rem; padding: .55rem .4rem; }
   .sect { padding: 2rem 1.5rem; }
   .topbar-inner { padding: 0 1rem; }
-  .topbar-nav { gap: 0.15rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-  .topbar-sep { display: none; }
-  .topbar-link { font-size: .72rem; padding: .28rem .45rem; }
+  .topbar-nav { gap: 0.25rem; }
+  .topbar-row2 { gap: 0.3rem; padding: 0.4rem 1rem; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .topbar-row2 .ql { font-size: 0.72rem; padding: 0.32rem 0.6rem; }
   footer { flex-direction: column; text-align: center; }
 }
 </style>
@@ -689,57 +684,44 @@ footer {
     <a href="index.html" class="topbar-brand">
       <span class="topbar-brand-oracle">Oracle Analytics</span>
       <span class="topbar-brand-sep">|</span>
-      AI Assistant Embedding
+      Embedding the Oracle Analytics AI Assistant
     </a>
     <div class="topbar-nav">
-      <a href="#overview" class="topbar-link">Overview</a>
-      <a href="#modules" class="topbar-link">Modules</a>
-      <a href="#advantages" class="topbar-link">Advantages</a>
-      <a href="#architecture" class="topbar-link">Architecture</a>
-      <span class="topbar-sep"></span>
-      <a href="setup.html" class="topbar-link page">Setup</a>
-      <a href="security.html" class="topbar-link page">Security</a>
-      <a href="exercises.html" class="topbar-link page">Exercises</a>
-      <a href="reference.html" class="topbar-link page">Reference</a>
       <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
         <span class="icon-sun">&#9728;&#65039;</span>
         <span class="icon-moon">&#127769;</span>
       </button>
     </div>
   </div>
+  <div class="topbar-row2">
+    <a href="quickstart.html" class="ql" style="border-color:rgba(245,158,11,0.3);"><span class="ql-dot" style="background:var(--gold);"></span>Quick Start</a>
+    <a href="setup.html" class="ql"><span class="ql-dot"></span>Setup Guide</a>
+    <a href="security.html" class="ql"><span class="ql-dot"></span>Security Deep-Dive</a>
+    <a href="exercises.html" class="ql"><span class="ql-dot"></span>Hands-On Exercises</a>
+    <a href="reference.html" class="ql"><span class="ql-dot"></span>Reference &amp; Resources</a>
+  </div>
 </header>
 
 <!-- ================================================================
-     HERO
+     HERO + INTRO (compact)
      ================================================================ -->
-<section class="hero">
+<section class="hero" id="overview">
   <div class="hero-content">
     <span class="hero-badge">Technical Guide &amp; Workshop</span>
     <h1>Embedding the OAC <span class="hl">AI Assistant</span> into Your Web Applications</h1>
-    <p class="hero-sub">Give your users the power to ask questions in plain English and get instant, visual answers — directly inside your portal, without ever leaving your application.</p>
-    <div class="hero-pills">
-      <span class="hero-pill">&#128337; 90 – 120 min</span>
-      <span class="hero-pill">&#128218; 4 modules</span>
-      <span class="hero-pill">&#128100; Ravi Bhuma</span>
-    </div>
+    <p class="hero-sub">Learn how you can easily embed the Oracle Analytics AI Assistant into your operational applications, portals, and web pages — enabling your users to ask natural-language questions and get instant, data-driven answers without leaving your application.</p>
   </div>
 </section>
 
 <!-- ================================================================
-     INTRO
+     QUICK START LINK
      ================================================================ -->
-<div class="intro-wrap" id="overview">
-  <div class="intro-box">
-    <h2>What You'll Find Here</h2>
-    <p>Oracle Analytics Cloud includes a built-in <strong>AI Assistant</strong> that lets users ask natural-language questions and receive data-driven visualizations instantly. What many teams don't realize is that this same Assistant can be <strong>embedded directly into any web application</strong> — your company portal, your intranet, your customer-facing dashboard, or any page you control.</p>
-    <p>This guide covers everything: from dropping a single HTML tag into your existing application to configuring enterprise-grade OAuth 2.0 token authentication for production deployments. Use it as a <strong>knowledge base</strong> for your architecture decisions, or follow it as a <strong>step-by-step workshop</strong> to get hands-on experience.</p>
-    <p>No frameworks required. No npm, no React, no build tools. Just a <code>&lt;script&gt;</code> tag, one custom element, and your users are talking to their data.</p>
-    <div class="intro-stats">
-      <div class="intro-stat"><div class="intro-stat-val">1</div><div class="intro-stat-lbl">Script tag</div></div>
-      <div class="intro-stat"><div class="intro-stat-val">1</div><div class="intro-stat-lbl">Custom element</div></div>
-      <div class="intro-stat"><div class="intro-stat-val">0</div><div class="intro-stat-lbl">Frameworks needed</div></div>
-    </div>
-  </div>
+<div class="qs-link-wrap">
+  <a href="quickstart.html" class="qs-link-card">
+    <span class="qs-badge">Quick Start</span>
+    <span class="qs-link-text">Already know what you're doing? <strong>Copy, paste, embed</strong> — get the three code snippets you need.</span>
+    <span class="qs-link-arrow">&#8594;</span>
+  </a>
 </div>
 
 <!-- ================================================================
@@ -749,16 +731,10 @@ footer {
   <div class="modules-label">Guides &amp; Workshop</div>
   <h2 class="modules-title">Choose Where to Start</h2>
   <div class="mod-grid">
-    <a href="setup.html" class="mod-card"><span class="mod-num">Module 01</span><div class="mod-icon">&#9889;</div><h3>Quick-Start Setup</h3><p>Build a working embedded AI Assistant from scratch — HTML skeleton, embedding library, layout, and local Python server.</p><span class="mod-tag t-beg">Beginner</span></a>
+    <a href="setup.html" class="mod-card"><span class="mod-num">Module 01</span><div class="mod-icon">&#9889;</div><h3>Setup Guide</h3><p>Build a working embedded AI Assistant from scratch — HTML skeleton, embedding library, layout, and local Python server.</p><span class="mod-tag t-beg">Beginner</span></a>
     <a href="security.html" class="mod-card"><span class="mod-num">Module 02</span><div class="mod-icon">&#128274;</div><h3>Security Deep-Dive</h3><p>Browser-based (session) vs. token-based authentication — IDCS confidential apps, OAuth 2.0 flows, and production patterns.</p><span class="mod-tag t-adv">Advanced</span></a>
     <a href="exercises.html" class="mod-card"><span class="mod-num">Module 03</span><div class="mod-icon">&#128736;</div><h3>Hands-On Exercises</h3><p>Step-by-step labs: standalone Assistant, dashboard side-by-side, and token-based authentication testing.</p><span class="mod-tag t-int">Intermediate</span></a>
     <a href="reference.html" class="mod-card"><span class="mod-num">Module 04</span><div class="mod-icon">&#128209;</div><h3>Reference &amp; Resources</h3><p>Complete code listings, troubleshooting, token expiry config, Safe Domains checklist, and Oracle docs.</p><span class="mod-tag t-ref">Reference</span></a>
-  </div>
-  <div class="quick-links">
-    <a href="setup.html" class="ql"><span class="ql-dot"></span>Setup Guide</a>
-    <a href="security.html" class="ql"><span class="ql-dot"></span>Security Deep-Dive</a>
-    <a href="exercises.html" class="ql"><span class="ql-dot"></span>Hands-On Exercises</a>
-    <a href="reference.html" class="ql"><span class="ql-dot"></span>Reference &amp; Resources</a>
   </div>
 </nav>
 
@@ -822,7 +798,7 @@ footer {
         <div class="ic"><svg viewBox="0 0 40 20"><path d="M0 10 L30 10 L24 4 M30 10 L24 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
         <div class="is" data-s="4" onclick="actStep(this)"><div class="is-n">4</div><div class="is-i">&#9889;</div><div class="is-l">applyBindings()</div><div class="is-s">Initialization</div></div>
       </div>
-      <div class="id"><div class="idc" data-s="1"><strong>Load the Engine:</strong> The <code>&lt;script&gt;</code> tag pulls the OAC embedding library from your instance. Do not download it locally.</div><div class="idc" data-s="2" style="display:none"><strong>Layout:</strong> CSS removes default margins and stretches the assistant to fill the viewport.</div><div class="idc" data-s="3" style="display:none"><strong>Declare:</strong> The <code>&lt;oracle-analytics-assistant&gt;</code> element tells OAC where to render. <code>src-data</code> specifies the dataset.</div><div class="idc" data-s="4" style="display:none"><strong>Activate:</strong> <code>applyBindings()</code> scans the DOM and wires up all OAC elements. Must run after the tags exist.</div></div>
+      <div class="id"><div class="idc" data-s="1"><strong>Load the Engine:</strong> The <code>&lt;script&gt;</code> tag pulls the OAC embedding library from your instance. Do not download it locally.</div><div class="idc" data-s="2" style="display:none"><strong>Layout:</strong> CSS removes default margins and stretches the assistant to fill the viewport.</div><div class="idc" data-s="3" style="display:none"><strong>Declare:</strong> The <code>&lt;oracle-analytics-assistant&gt;</code> element tells OAC where to render. <code>src-data</code> specifies the data source — a dataset or subject area.</div><div class="idc" data-s="4" style="display:none"><strong>Activate:</strong> <code>applyBindings()</code> scans the DOM and wires up all OAC elements. Must run after the tags exist.</div></div>
     </div>
     <div class="arch-panel" id="fp-brw">
       <div class="arch-title">Browser-Based (Session) Authentication</div>
@@ -868,21 +844,14 @@ footer {
 </section>
 
 <!-- ================================================================
-     PREREQUISITES
+     SUPPORTED DATA SOURCES
      ================================================================ -->
-<section class="sect" id="prerequisites">
+<section class="sect" id="data-sources">
   <div class="sect-num">04</div>
-  <div class="sect-label">Prerequisites</div>
-  <h2>Before You Begin</h2>
-  <p>Confirm you have these items ready before starting.</p>
-  <div class="fg c3">
-    <div class="fi"><div class="fi-icon">&#127758;</div><div><h4>OAC Instance</h4><p class="fi-p">Oracle Analytics Cloud with the AI Assistant enabled.</p></div></div>
-    <div class="fi"><div class="fi-icon bl">&#128187;</div><div><h4>Browser</h4><p class="fi-p">Google Chrome recommended. DevTools (F12) for debugging.</p></div></div>
-    <div class="fi"><div class="fi-icon gr">&#128013;</div><div><h4>Python 3.x</h4><p class="fi-p">For a one-line local web server. No Python knowledge required.</p></div></div>
-    <div class="fi"><div class="fi-icon go">&#9998;</div><div><h4>Text Editor</h4><p class="fi-p">VS Code, Notepad++, Sublime, or plain Notepad.</p></div></div>
-    <div class="fi"><div class="fi-icon pu">&#128100;</div><div><h4>OAC Permissions</h4><p class="fi-p"><em>Use Assistant in Workbooks</em> (DV Content Author default).</p></div></div>
-    <div class="fi"><div class="fi-icon cy">&#128451;</div><div><h4>Data Source</h4><p class="fi-p">A dataset available in your OAC instance for the AI Assistant to query.</p></div></div>
-  </div>
+  <div class="sect-label">Data Sources</div>
+  <h2>What Can You Embed?</h2>
+  <p>The embedded AI Assistant works with three types of OAC data sources: <strong>RPD Subject Areas</strong>, <strong>file-based Datasets</strong>, and <strong>Local Subject Areas (LSA)</strong>. See <a href="setup.html#step4">Setup, Step 4</a> for the exact <code>src-data</code> format for each.</p>
+  <p style="color:var(--text-3);font-size:0.85rem;margin-top:1rem;">For local testing, you'll need Python 3.x and a text editor. See <a href="setup.html#step6">Setup, Step 6 (setup.html)</a> for instructions.</p>
 </section>
 
 <!-- ================================================================
