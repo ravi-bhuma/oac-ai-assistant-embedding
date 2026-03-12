@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 04: Reference &amp; Resources — OAC AI Assistant Embedding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg-primary:#0a0e1a;--bg-secondary:#111827;--bg-card:#1a2236;--bg-card-hover:#1f2a42;--accent-oracle:#c74634;--accent-gold:#f59e0b;--accent-blue:#3b82f6;--accent-green:#10b981;--accent-purple:#8b5cf6;--accent-cyan:#06b6d4;--text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#1e293b;--border-accent:#334155;--code-bg:#0f172a;--font-body:'Plus Jakarta Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);line-height:1.7}a{color:var(--accent-blue);text-decoration:none;transition:color .2s}a:hover{color:var(--accent-cyan)}
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;align-items:center;justify-content:space-between}.topnav-brand{font-weight:700;font-size:.9rem;color:var(--text-primary)}.topnav-brand span{color:var(--accent-oracle)}.topnav-links{display:flex;gap:1.5rem;font-size:.82rem}.topnav-links a{color:var(--text-muted)}.topnav-links a:hover{color:var(--text-primary)}.topnav-links a.active{color:var(--accent-oracle)}
+.page-header{padding:3rem 2rem 2rem;max-width:900px;margin:0 auto}.page-header .module-label{font-family:var(--font-mono);font-size:.7rem;color:var(--accent-oracle);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem}.page-header h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.75rem}.page-header .subtitle{font-size:1rem;color:var(--text-secondary);max-width:700px}
+.content{max-width:900px;margin:0 auto;padding:0 2rem 4rem}
+h2{font-size:1.4rem;font-weight:700;margin:2.5rem 0 1rem;padding-top:1.5rem;border-top:1px solid var(--border)}h3{font-size:1.1rem;font-weight:700;margin:1.5rem 0 .75rem}p,li{font-size:.92rem;color:var(--text-secondary);margin-bottom:.6rem}ul,ol{padding-left:1.5rem;margin-bottom:1rem}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;overflow-x:auto;margin:1rem 0;font-family:var(--font-mono);font-size:.82rem;line-height:1.7;color:#e2e8f0}pre .comment{color:#64748b}pre .tag{color:#f472b6}pre .attr{color:#a78bfa}pre .string{color:#34d399}pre .keyword{color:#60a5fa}
+code{font-family:var(--font-mono);font-size:.84em;background:var(--code-bg);border:1px solid var(--border);padding:.15rem .4rem;border-radius:4px}pre code{background:none;border:none;padding:0}
+.callout{border-radius:10px;padding:1rem 1.25rem;margin:1rem 0;font-size:.88rem;line-height:1.6;display:flex;gap:.75rem}.callout-icon{font-size:1.1rem;flex-shrink:0;margin-top:.1rem}.callout-info{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:#93c5fd}.callout-warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:#fcd34d}
+
+/* Troubleshooting table */
+.trouble-table{width:100%;border-collapse:collapse;margin:1.5rem 0;font-size:.85rem}
+.trouble-table th,.trouble-table td{padding:.75rem 1rem;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+.trouble-table th{background:var(--bg-card);font-weight:600;font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)}
+.trouble-table td{color:var(--text-secondary)}
+.trouble-table tr:hover td{background:rgba(30,41,59,.5)}
+
+/* Links grid */
+.links-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem;margin:1.5rem 0}
+.link-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:all .3s;display:block;color:inherit}
+.link-card:hover{border-color:var(--border-accent);background:var(--bg-card-hover);transform:translateY(-2px)}
+.link-card h4{font-size:.9rem;font-weight:600;margin-bottom:.3rem;color:var(--text-primary)}
+.link-card p{font-size:.8rem;color:var(--text-muted);margin:0}
+.link-card .source{font-family:var(--font-mono);font-size:.7rem;color:var(--accent-oracle);margin-top:.5rem;display:block}
+
+.pagination{display:flex;justify-content:space-between;padding:2rem 0;border-top:1px solid var(--border);margin-top:2rem}.pagination a{display:flex;flex-direction:column;gap:.2rem;padding:.75rem 1.25rem;border:1px solid var(--border);border-radius:10px;transition:all .2s;font-size:.85rem}.pagination a:hover{border-color:var(--border-accent);background:var(--bg-card)}.pagination a small{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+footer{text-align:center;padding:2rem;border-top:1px solid var(--border);color:var(--text-muted);font-size:.78rem}
+@media(max-width:768px){.topnav{padding:.75rem 1rem}.topnav-links{gap:.75rem;font-size:.75rem}.page-header,.content{padding-left:1.5rem;padding-right:1.5rem}.links-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav-brand"><span>OAC</span> Embedding Workshop</a>
+  <div class="topnav-links">
+    <a href="setup.html">Setup</a>
+    <a href="security.html">Security</a>
+    <a href="exercises.html">Exercises</a>
+    <a href="reference.html" class="active">Reference</a>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="module-label">Module 04</div>
+  <h1>Reference &amp; Resources</h1>
+  <p class="subtitle">Complete code listings, troubleshooting guide, token expiry configuration, architecture notes, and links to official Oracle documentation.</p>
+</header>
+
+<main class="content">
+
+<!-- COMPLETE CODE: BROWSER AUTH -->
+<h2 id="code-browser">Complete Code: Browser-Based Auth</h2>
+<p>The minimal standalone AI Assistant embedding with session-based authentication:</p>
+<pre><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">dir</span>=<span class="string">"ltr"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;script</span>
+    <span class="attr">src</span>=<span class="string">"https://&lt;your-oac-host&gt;/public/dv/v2/embedding/auto/embedding.js"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/script&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    html, body { margin: 0; height: 100%; }
+    oracle-analytics-assistant {
+      width: 100%; height: 100%; display: block;
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;oracle-analytics-assistant</span>
+    <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
+    <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('&lt;user&gt;'.'&lt;dataset&gt;')&amp;quot;]"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
+  <span class="tag">&lt;script&gt;</span>
+    oracle.oa.embedding.ready().then(oApp =&gt; oApp.applyBindings());
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+
+<!-- COMPLETE CODE: TOKEN AUTH -->
+<h2 id="code-token">Complete Code: Token-Based Auth</h2>
+<p>AI Assistant embedding with OAuth 2.0 token authentication:</p>
+<pre><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">dir</span>=<span class="string">"ltr"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;script</span>
+    <span class="attr">src</span>=<span class="string">"https://&lt;your-oac-host&gt;/public/dv/v2/embedding/auto/embedding.js"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/script&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    html, body { margin: 0; height: 100%; }
+    oracle-analytics-assistant {
+      width: 100%; height: 100%; display: block;
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;oracle-analytics-assistant</span>
+    <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
+    <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('&lt;user&gt;'.'&lt;dataset&gt;')&amp;quot;]"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
+  <span class="tag">&lt;script&gt;</span>
+    <span class="keyword">const</span> token = '<span class="string">&lt;access-token&gt;</span>';
+
+    oracle.oa.embedding.ready().then((oApp) =&gt; {
+      oApp.setEmbeddingConfig({
+        oSecurityConfig: {
+          eSecurityType: <span class="string">"token"</span>,
+          oOptions: {
+            credentials: <span class="string">""</span>,
+            tokenAuthFunction: <span class="keyword">new</span> Function(<span class="string">"return '"</span> + token + <span class="string">"'"</span>)
+          }
+        }
+      });
+      oApp.applyBindings();
+    });
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+
+<!-- COMPLETE CODE: DASHBOARD + ASSISTANT -->
+<h2 id="code-dashboard">Complete Code: Dashboard + Assistant</h2>
+<p>Split-screen layout with a dashboard and the AI Assistant side-by-side:</p>
+<pre><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">dir</span>=<span class="string">"ltr"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;script</span>
+    <span class="attr">src</span>=<span class="string">"https://&lt;your-oac-host&gt;/public/dv/v2/embedding/auto/embedding.js"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/script&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    html, body { margin: 0; height: 100%; }
+    .container { display: flex; height: 100%; }
+    .analytics { flex: 2; height: 100%; border-right: 1px solid #334155; }
+    .assistant { flex: 1; height: 100%; min-width: 360px; }
+    oracle-dv, oracle-analytics-assistant {
+      width: 100%; height: 100%; display: block;
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"container"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"analytics"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;oracle-dv</span>
+        <span class="attr">project-path</span>=<span class="string">"&lt;your-project-path&gt;"</span>
+        <span class="attr">active-page</span>=<span class="string">"insight"</span>
+        <span class="attr">active-tab-id</span>=<span class="string">"snapshot!canvas!1"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;/oracle-dv&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"assistant"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;oracle-analytics-assistant</span>
+        <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
+        <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('&lt;user&gt;'.'&lt;dataset&gt;')&amp;quot;]"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;script&gt;</span>
+    oracle.oa.embedding.ready().then(oApp =&gt; oApp.applyBindings());
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+
+<!-- TOKEN EXPIRY -->
+<h2 id="token-expiry">Configuring Token Expiry</h2>
+<p>OAC access tokens default to 100 seconds — far too short for interactive sessions. To extend the expiry, use the IDCS SCIM API to patch the OAC application settings:</p>
+
+<pre><code><span class="comment"># Step 1: Get a bearer token for the IDCS admin API</span>
+curl --request POST \
+  https://&lt;IDCS-domain&gt;.identity.oraclecloud.com/oauth2/v1/token \
+  -H 'Authorization: Basic &lt;base64 clientID:clientSecret&gt;' \
+  -H 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8' \
+  -d 'grant_type=client_credentials&amp;scope=urn:opc:idm:__myscopes__'
+
+<span class="comment"># Step 2: Patch the OAC app to extend token lifetime</span>
+curl --request PATCH \
+  --url https://&lt;IDCS-domain&gt;.identity.oraclecloud.com/admin/v1/Apps/&lt;OAC-AppID&gt; \
+  --header 'Authorization: Bearer &lt;admin-token-from-step1&gt;' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "schemas": ["urn:ietf:params:scim:api:messages:2.0:PatchOp"],
+    "Operations": [
+      { "op": "replace", "path": "accessTokenExpiry", "value": 3600 },
+      { "op": "replace", "path": "refreshTokenExpiry", "value": 86400 },
+      { "op": "replace", "path": "allowOffline", "value": true }
+    ]
+  }'</code></pre>
+
+<div class="callout callout-info">
+  <span class="callout-icon">&#8505;&#65039;</span>
+  <div><strong>Finding the AppID:</strong> The <code>&lt;OAC-AppID&gt;</code> can be found in the IDCS console under the OAC application's App Details section. This is the IDCS application that represents the OAC instance itself, not the confidential application you created for token generation.</div>
+</div>
+
+<!-- TROUBLESHOOTING -->
+<h2 id="troubleshooting">Troubleshooting Guide</h2>
+
+<table class="trouble-table">
+  <thead>
+    <tr>
+      <th style="width:28%">Problem</th>
+      <th style="width:30%">Likely Cause</th>
+      <th>Fix</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Page is blank / Assistant does not appear</td>
+      <td>Safe Domain not added, or page served from wrong origin</td>
+      <td>Double-check the Safe Domain in OAC Admin. Ensure it matches protocol + host + port exactly (e.g., <code>http://localhost:8000</code>).</td>
+    </tr>
+    <tr>
+      <td>CORS error in Console</td>
+      <td>OAC does not recognize the embedding origin</td>
+      <td>Add the origin to Safe Domains with the <strong>Embedding</strong> checkbox enabled. Sign out and sign back in to OAC.</td>
+    </tr>
+    <tr>
+      <td><code>embedding.js</code> shows 404 in Network tab</td>
+      <td>Typo in the script URL</td>
+      <td>Copy the URL from OAC's Developer &#8594; Embed tab. Verify the instance hostname and version path (<code>v2</code>).</td>
+    </tr>
+    <tr>
+      <td><code>TypeError: Cannot read properties of undefined</code></td>
+      <td>Init script ran before embedding library loaded</td>
+      <td>Ensure the <code>applyBindings()</code> script comes <strong>after</strong> both the <code>embedding.js</code> <code>&lt;script&gt;</code> and the <code>&lt;oracle-analytics-assistant&gt;</code> tag.</td>
+    </tr>
+    <tr>
+      <td>Assistant loads but says "no data"</td>
+      <td>Not logged into OAC, or wrong dataset name</td>
+      <td>Log into OAC in another tab. Verify the dataset name in <code>src-data</code> matches exactly (case-sensitive).</td>
+    </tr>
+    <tr>
+      <td>Double scrollbar on the page</td>
+      <td>Missing CSS from Step 3</td>
+      <td>Add <code>html, body { margin: 0; height: 100%; }</code> and set the assistant element to <code>display: block</code>.</td>
+    </tr>
+    <tr>
+      <td>Token auth — "AJAX request failed during bootstrap"</td>
+      <td>Token expired or invalid</td>
+      <td>Generate a fresh token. Check token expiry settings. Verify the scope includes the correct OAC instance.</td>
+    </tr>
+    <tr>
+      <td>Token auth — CORS error despite Safe Domain</td>
+      <td>Misleading error — actual issue is the token</td>
+      <td>Check the Network tab &#8594; first failed request &#8594; Headers. The real error is usually in the response body, not CORS.</td>
+    </tr>
+    <tr>
+      <td>Works in Chrome but not Safari</td>
+      <td>Safari blocks third-party cookies by default</td>
+      <td>Switch to token-based auth (no cookies needed) or configure a vanity URL so both domains match.</td>
+    </tr>
+    <tr>
+      <td><code>file://</code> protocol errors</td>
+      <td>Opening HTML file directly instead of via web server</td>
+      <td>Always serve via <code>python -m http.server</code> or VS Code Live Server. Never use <code>file://</code>.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- REQUIRED PERMISSIONS -->
+<h2 id="permissions">Required Permissions</h2>
+<p>The embedded AI Assistant is controlled by OAC's role-based access system. The key permission is <strong>Use Assistant in Workbooks</strong>, which is included by default in the <strong>DV Content Author</strong> application role.</p>
+<p>If your organization uses custom roles, administrators can create a role with only this specific permission — useful for granting AI Assistant access without full content authoring capabilities.</p>
+<p>Verify user roles in the OAC Console under <strong>Users and Roles &#8594; Application Roles</strong>.</p>
+
+<!-- PRODUCTION SAFE DOMAINS -->
+<h2 id="safe-domains-prod">Production Checklist: Safe Domains</h2>
+<p>When you embed the AI Assistant into your existing portal or web application, the production domain <strong>must</strong> be registered as a Safe Domain in OAC — otherwise the embedded components will be blocked by CORS and the Assistant will not render.</p>
+
+<h3>Steps</h3>
+<ol>
+  <li>Sign in to Oracle Analytics Cloud as an administrator.</li>
+  <li>Navigate to <strong>Console &#8594; Administration &#8594; Safe Domains</strong>.</li>
+  <li>Click <strong>Add Domain</strong>.</li>
+  <li>Enter the <strong>exact origin</strong> of your production site — for example <code>https://portal.yourcompany.com</code>. The protocol, hostname, and port must all match.</li>
+  <li>Check the <strong>Embedding</strong> checkbox (required for <code>&lt;oracle-analytics-assistant&gt;</code> and <code>&lt;oracle-dv&gt;</code> tags to render).</li>
+  <li>Optionally check <strong>Scripts</strong> if your page also loads additional OAC resources.</li>
+  <li>Click <strong>Save</strong>.</li>
+</ol>
+
+<div class="callout callout-warn">
+  <span class="callout-icon">&#9888;&#65039;</span>
+  <div><strong>After adding a Safe Domain,</strong> users must sign out and sign back in to OAC for the change to take effect. If you are testing in development alongside production, you will need separate entries for each origin (e.g., <code>http://localhost:8000</code> for dev and <code>https://portal.yourcompany.com</code> for production).</div>
+</div>
+
+<div class="callout callout-info">
+  <span class="callout-icon">&#8505;&#65039;</span>
+  <div><strong>Wildcard support:</strong> OAC Safe Domains support wildcards (e.g., <code>https://*.yourcompany.com</code>) to avoid creating multiple entries for subdomains. Use wildcards carefully — only add the domains you actually need.</div>
+</div>
+
+<!-- DOCUMENTATION LINKS -->
+<h2 id="links">Official Documentation &amp; Resources</h2>
+
+<div class="links-grid">
+  <a href="https://blogs.oracle.com/analytics/embedding-the-oracle-analytics-cloud-ai-assistant-into-a-custom-html-page" target="_blank" class="link-card">
+    <h4>Blog: Embedding the OAC AI Assistant</h4>
+    <p>The original blog post that this workshop is based on — step-by-step embedding guide.</p>
+    <span class="source">blogs.oracle.com/analytics</span>
+  </a>
+  <a href="https://docs.oracle.com/en/cloud/paas/analytics-cloud/acubi/oracle-analytics-ai-assistant.html" target="_blank" class="link-card">
+    <h4>OAC AI Assistant Documentation</h4>
+    <p>Official Oracle documentation for the AI Assistant feature — capabilities, permissions, and configuration.</p>
+    <span class="source">docs.oracle.com</span>
+  </a>
+  <a href="https://docs.oracle.com/en/cloud/paas/analytics-cloud/acsdv/use-token-authentication-embedded-oracle-analytics-cloud-content.html" target="_blank" class="link-card">
+    <h4>Token Authentication for Embedded Content</h4>
+    <p>Oracle documentation on using OAuth 2.0 tokens with embedded OAC canvases and assistants.</p>
+    <span class="source">docs.oracle.com</span>
+  </a>
+  <a href="https://docs.oracle.com/en/cloud/paas/analytics-cloud/acsdv/prepare-html-page-embedded-oracle-analytics-content.html" target="_blank" class="link-card">
+    <h4>Prepare HTML for Embedded Content</h4>
+    <p>Official guide for structuring the HTML page, embedding modes (standalone, jet, auto), and attributes.</p>
+    <span class="source">docs.oracle.com</span>
+  </a>
+  <a href="https://docs.oracle.com/en/cloud/paas/analytics-cloud/acabi/register-safe-domains.html" target="_blank" class="link-card">
+    <h4>Register Safe Domains</h4>
+    <p>How to configure Safe Domains in OAC for CORS compliance and embedding authorization.</p>
+    <span class="source">docs.oracle.com</span>
+  </a>
+  <a href="https://youtu.be/q1ux-pytE6o?si=ZkLSedZv-_e0WPf0" target="_blank" class="link-card">
+    <h4>Demo: Embedded AI Assistant Patterns</h4>
+    <p>2-minute video showing standalone, side-by-side dashboard, dynamic dataset selector, and line-of-business app patterns.</p>
+    <span class="source">youtube.com</span>
+  </a>
+</div>
+
+<h3>Community &amp; Related Resources</h3>
+<div class="links-grid">
+  <a href="https://ravi-bhuma.github.io/oac-ai-functions/" target="_blank" class="link-card">
+    <h4>OAC AI Functions Workshop</h4>
+    <p>Companion workshop on AI_GENERATE, AI_AGG, and AI_FILTER functions in OAC.</p>
+    <span class="source">ravi-bhuma.github.io</span>
+  </a>
+  <a href="https://ravi-bhuma.github.io/oac-prompt-studio/" target="_blank" class="link-card">
+    <h4>OAC Prompt Studio</h4>
+    <p>Resource hub for OAC AI Agents prompt engineering — R.T.C.C.O.E framework and techniques.</p>
+    <span class="source">ravi-bhuma.github.io</span>
+  </a>
+  <a href="https://community.oracle.com/products/oracleanalytics" target="_blank" class="link-card">
+    <h4>Oracle Analytics Community</h4>
+    <p>Join the conversation — ask questions, share solutions, and connect with practitioners.</p>
+    <span class="source">community.oracle.com</span>
+  </a>
+</div>
+
+<div class="callout callout-warn">
+  <span class="callout-icon">&#9888;&#65039;</span>
+  <div><strong>Stay current:</strong> Oracle Analytics is updated regularly. Always reference the official documentation for the latest embedding API changes, supported attributes, and security best practices.</div>
+</div>
+
+<div class="pagination">
+  <a href="exercises.html">
+    <small>&#8592; Previous</small>
+    <span>Hands-On Exercises</span>
+  </a>
+  <a href="index.html" style="text-align:right;">
+    <small>Back to &#8594;</small>
+    <span>Home</span>
+  </a>
+</div>
+
+</main>
+
+<footer>
+  OAC AI Assistant Embedding Workshop &mdash; Ravi Bhuma
+</footer>
+
+</body>
+</html>

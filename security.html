@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 02: Security Deep-Dive — OAC AI Assistant Embedding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-card: #1a2236;
+  --bg-card-hover: #1f2a42;
+  --accent-oracle: #c74634;
+  --accent-gold: #f59e0b;
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-purple: #8b5cf6;
+  --accent-cyan: #06b6d4;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: #1e293b;
+  --border-accent: #334155;
+  --code-bg: #0f172a;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--bg-primary); color: var(--text-primary); line-height: 1.7; }
+a { color: var(--accent-blue); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--accent-cyan); }
+.topnav { position: sticky; top: 0; z-index: 100; background: rgba(10,14,26,0.92); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 0.75rem 2rem; display: flex; align-items: center; justify-content: space-between; }
+.topnav-brand { font-weight: 700; font-size: 0.9rem; color: var(--text-primary); }
+.topnav-brand span { color: var(--accent-oracle); }
+.topnav-links { display: flex; gap: 1.5rem; font-size: 0.82rem; }
+.topnav-links a { color: var(--text-muted); }
+.topnav-links a:hover { color: var(--text-primary); }
+.topnav-links a.active { color: var(--accent-oracle); }
+.page-header { padding: 3rem 2rem 2rem; max-width: 900px; margin: 0 auto; }
+.page-header .module-label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-oracle); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem; }
+.page-header h1 { font-size: clamp(1.8rem, 4vw, 2.6rem); font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.75rem; }
+.page-header .subtitle { font-size: 1rem; color: var(--text-secondary); max-width: 700px; }
+.content { max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem; }
+.section-divider { margin: 3rem 0 2rem; padding-top: 2rem; border-top: 2px solid var(--accent-oracle); }
+.section-divider h2 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; }
+.section-divider .label { font-family: var(--font-mono); font-size: 0.7rem; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 0.12em; margin-bottom: 0.5rem; }
+
+h3 { font-size: 1.15rem; font-weight: 700; margin: 2rem 0 0.75rem; }
+p, li { font-size: 0.92rem; color: var(--text-secondary); margin-bottom: 0.6rem; }
+ul, ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+
+pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem 1.5rem; overflow-x: auto; margin: 1rem 0; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.7; color: #e2e8f0; }
+pre .comment { color: #64748b; } pre .tag { color: #f472b6; } pre .attr { color: #a78bfa; } pre .string { color: #34d399; } pre .keyword { color: #60a5fa; }
+code { font-family: var(--font-mono); font-size: 0.84em; background: var(--code-bg); border: 1px solid var(--border); padding: 0.15rem 0.4rem; border-radius: 4px; }
+pre code { background: none; border: none; padding: 0; }
+
+.callout { border-radius: 10px; padding: 1rem 1.25rem; margin: 1rem 0; font-size: 0.88rem; line-height: 1.6; display: flex; gap: 0.75rem; }
+.callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+.callout-info { background: rgba(59,130,246,0.08); border: 1px solid rgba(59,130,246,0.2); color: #93c5fd; }
+.callout-warn { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); color: #fcd34d; }
+.callout-success { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); color: #6ee7b7; }
+.callout-danger { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
+
+/* Flow diagram */
+.flow-diagram { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin: 1.5rem 0; overflow-x: auto; }
+.flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.78rem; margin-bottom: 0.75rem; }
+.flow-row:last-child { margin-bottom: 0; }
+.flow-box { background: var(--code-bg); border: 1px solid var(--border-accent); border-radius: 8px; padding: 0.5rem 0.8rem; text-align: center; min-width: 100px; }
+.flow-box.highlight-blue { border-color: var(--accent-blue); color: var(--accent-blue); }
+.flow-box.highlight-green { border-color: var(--accent-green); color: var(--accent-green); }
+.flow-box.highlight-oracle { border-color: var(--accent-oracle); color: var(--accent-oracle); }
+.flow-box.highlight-gold { border-color: var(--accent-gold); color: var(--accent-gold); }
+.flow-arrow { color: var(--accent-oracle); font-weight: 700; font-size: 1rem; }
+
+/* Step blocks within security */
+.sec-step { margin: 2rem 0; padding: 1.5rem; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; }
+.sec-step-num { font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600; color: var(--accent-gold); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+.sec-step h4 { font-size: 1.05rem; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem; }
+
+/* Comparison table */
+.comparison-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; font-size: 0.85rem; }
+.comparison-table th, .comparison-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+.comparison-table th { background: var(--bg-card); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-muted); }
+.comparison-table td { color: var(--text-secondary); }
+.comparison-table tr:hover td { background: rgba(30,41,59,0.5); }
+
+.pagination { display: flex; justify-content: space-between; padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 2rem; }
+.pagination a { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.75rem 1.25rem; border: 1px solid var(--border); border-radius: 10px; transition: all 0.2s; font-size: 0.85rem; }
+.pagination a:hover { border-color: var(--border-accent); background: var(--bg-card); }
+.pagination a small { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+footer { text-align: center; padding: 2rem; border-top: 1px solid var(--border); color: var(--text-muted); font-size: 0.78rem; }
+@media (max-width: 768px) {
+  .topnav { padding: 0.75rem 1rem; }
+  .topnav-links { gap: 0.75rem; font-size: 0.75rem; }
+  .page-header, .content { padding-left: 1.5rem; padding-right: 1.5rem; }
+  .flow-row { flex-direction: column; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav-brand"><span>OAC</span> Embedding Workshop</a>
+  <div class="topnav-links">
+    <a href="setup.html">Setup</a>
+    <a href="security.html" class="active">Security</a>
+    <a href="exercises.html">Exercises</a>
+    <a href="reference.html">Reference</a>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="module-label">Module 02</div>
+  <h1>Security Deep-Dive</h1>
+  <p class="subtitle">A detailed walkthrough of both authentication models for embedded OAC content — browser-based (session) and token-based (OAuth 2.0) — including IDCS configuration, token lifecycle, and production deployment patterns.</p>
+</header>
+
+<main class="content">
+
+<!-- OVERVIEW -->
+<p>Security is the most critical aspect of embedding analytics. Every embedded query that reaches OAC must be authenticated and authorized. Oracle Analytics supports two distinct authentication models, each with different trade-offs for user experience, complexity, and browser compatibility.</p>
+
+<p>This module walks through <strong>both models in detail</strong>, explains the underlying OAuth 2.0 mechanics, and gives you the exact steps to configure each one.</p>
+
+<!-- ============================================================ -->
+<!-- SECTION A: BROWSER-BASED / SESSION AUTH -->
+<!-- ============================================================ -->
+<div class="section-divider" id="browser-auth">
+  <div class="label">Authentication Model A</div>
+  <h2>Browser-Based (Session) Authentication</h2>
+</div>
+
+<h3>How It Works</h3>
+<p>Browser-based authentication is the simplest embedding model. It relies on the user already having an active OAC session in their browser. When the embedded page loads, the embedding framework piggybacks on the existing session cookie to authenticate API calls back to OAC.</p>
+
+<div class="flow-diagram">
+  <div class="flow-row">
+    <span class="flow-box highlight-blue">User</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box">Logs into OAC<br>(or SSO handles it)</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box highlight-green">Session Cookie<br>set in browser</span>
+  </div>
+  <div class="flow-row">
+    <span class="flow-box highlight-blue">User</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box">Opens embedded page</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box">embedding.js loads</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box highlight-green">Cookie sent<br>with API calls</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box highlight-oracle">OAC validates<br>session</span>
+  </div>
+</div>
+
+<h3>Step-by-Step Setup</h3>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step A-1</div>
+  <h4>Ensure Users Have OAC Accounts &amp; Permissions</h4>
+  <p>Every user who will access the embedded page must have an OAC user account with the <strong>Use Assistant in Workbooks</strong> permission. This permission is included by default in the <strong>DV Content Author</strong> application role. If you need tighter control, create a custom application role and explicitly grant the permission.</p>
+  <p>Verify this in the OAC Console under <strong>Users and Roles</strong>.</p>
+</div>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step A-2</div>
+  <h4>Configure SSO (If Not Already Done)</h4>
+  <p>For a seamless experience, your organization should have SSO configured between your identity provider (Azure AD, Okta, ADFS, etc.) and Oracle Identity Cloud Service (IDCS) / OCI IAM Identity Domains. When SSO is in place, users authenticate once and gain access to both your portal and OAC without a second login prompt.</p>
+  <p>Without SSO, users must manually log into OAC in a separate browser tab before the embedded page will render. The session cookie is shared across tabs within the same browser profile.</p>
+</div>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step A-3</div>
+  <h4>Register the Embedding Origin as a Safe Domain</h4>
+  <p>OAC enforces CORS restrictions on embedded content. You must explicitly register the hosting domain in OAC's Safe Domains configuration:</p>
+  <ol>
+    <li>Sign in to OAC as an administrator.</li>
+    <li>Navigate to <strong>Console &#8594; Administration &#8594; Safe Domains</strong>.</li>
+    <li>Click <strong>Add Domain</strong>.</li>
+    <li>Enter the exact origin of your embedding page (e.g., <code>https://portal.yourcompany.com</code> or <code>http://localhost:8000</code> for local testing).</li>
+    <li>Check the <strong>Embedding</strong> checkbox to allow OAC components to render on pages from this origin.</li>
+    <li>Save.</li>
+  </ol>
+
+  <div class="callout callout-danger">
+    <span class="callout-icon">&#10060;</span>
+    <div><strong>The origin must match exactly</strong> — protocol (<code>http</code> vs <code>https</code>), hostname, and port. <code>http://localhost:8000</code> and <code>http://localhost:5500</code> are different origins. A mismatch will produce CORS errors in the browser console.</div>
+  </div>
+</div>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step A-4</div>
+  <h4>Use the Standard Embedding Code (No Token Config)</h4>
+  <p>With browser-based auth, no special security configuration is needed in your JavaScript. The standard <code>applyBindings()</code> call is sufficient:</p>
+<pre><code><span class="tag">&lt;oracle-analytics-assistant</span>
+  <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
+  <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('user'.'dataset')&amp;quot;]"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
+<span class="tag">&lt;script&gt;</span>
+  oracle.oa.embedding.ready().then(oApp =&gt; oApp.applyBindings());
+<span class="tag">&lt;/script&gt;</span></code></pre>
+  <p>That's it. The browser's session cookie handles authentication automatically.</p>
+</div>
+
+<h3>When to Use Browser-Based Auth</h3>
+<ul>
+  <li>Internal portals and intranets where all users have OAC accounts.</li>
+  <li>Environments with SSO already configured (Azure AD, Okta, ADFS + IDCS).</li>
+  <li>Rapid prototyping and development — it's the fastest way to test embedding.</li>
+  <li>Scenarios where you want per-user identity — each user sees data according to their own OAC role and row-level security rules.</li>
+</ul>
+
+<h3>Limitations</h3>
+<ul>
+  <li><strong>Third-party cookie blocking:</strong> Modern browsers (Safari, Chrome with partitioned cookies) increasingly block third-party cookies. If the embedding page and OAC are on different domains, the session cookie may be blocked. A vanity URL (matching domains) or token-based auth resolves this.</li>
+  <li><strong>Login dependency:</strong> Without SSO, users must separately log into OAC — adding friction.</li>
+  <li><strong>Not suitable for public/anonymous access:</strong> Every viewer needs an OAC account.</li>
+</ul>
+
+<!-- ============================================================ -->
+<!-- SECTION B: TOKEN-BASED AUTH -->
+<!-- ============================================================ -->
+<div class="section-divider" id="token-auth">
+  <div class="label">Authentication Model B</div>
+  <h2>Token-Based Authentication (OAuth 2.0)</h2>
+</div>
+
+<h3>How It Works</h3>
+<p>Token-based authentication uses an OAuth 2.0 bearer token to authenticate the embedded content. Instead of relying on the user's browser session, a server-side process obtains an access token from Oracle Identity Cloud Service (IDCS) and injects it into the page. The embedding framework uses this token for all API calls to OAC.</p>
+
+<p>This is the <strong>recommended model for production deployments</strong>, especially for public-facing sites, portals where users don't have OAC accounts, or any scenario where third-party cookie blocking is a concern.</p>
+
+<div class="flow-diagram">
+  <div class="flow-row">
+    <span class="flow-box highlight-blue">User</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box">Visits embedded page</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box highlight-gold">Page calls<br>server-side API</span>
+  </div>
+  <div class="flow-row">
+    <span class="flow-box highlight-gold">Server-side API</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box">Calls IDCS<br>/oauth2/v1/token</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box highlight-green">Access Token<br>returned</span>
+  </div>
+  <div class="flow-row">
+    <span class="flow-box highlight-green">Token injected<br>into page JS</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box">setEmbeddingConfig()<br>with token</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box highlight-oracle">OAC validates<br>token</span>
+    <span class="flow-arrow">&#10132;</span>
+    <span class="flow-box highlight-blue">AI Assistant<br>renders</span>
+  </div>
+</div>
+
+<div class="callout callout-warn">
+  <span class="callout-icon">&#9888;&#65039;</span>
+  <div><strong>Critical security principle:</strong> Never expose the IDCS Client ID, Client Secret, or user credentials in client-side JavaScript. Token generation must happen server-side (via Oracle Functions, API Gateway, a backend API, or at minimum a secure server script). The client page only ever receives the opaque bearer token.</div>
+</div>
+
+<h3>Step-by-Step Setup</h3>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step B-1</div>
+  <h4>Create an IDCS Confidential Application</h4>
+  <p>A confidential application in IDCS acts as a proxy between your embedding page and OAC. It holds the Client ID and Client Secret used to request tokens.</p>
+  <ol>
+    <li>Sign in to the <strong>OCI Console</strong> as an administrator.</li>
+    <li>Navigate to <strong>Identity &amp; Security &#8594; Domains</strong> (or Federation &#8594; OracleIdentityCloudService for older tenancies).</li>
+    <li>Open the IDCS admin console.</li>
+    <li>Go to <strong>Applications &#8594; Add &#8594; Confidential Application</strong>.</li>
+    <li>Enter a name (e.g., <code>OAC_Embedding_Token_App</code>) and click Next.</li>
+    <li>Select <strong>Configure this application as a client now</strong>.</li>
+    <li>Under <strong>Allowed Grant Types</strong>, select:
+      <ul>
+        <li><strong>Resource Owner Password Credentials</strong> — for server-to-server token requests using a service account.</li>
+        <li>Optionally, <strong>Authorization Code</strong> — if you plan to use user-interactive OAuth flows (e.g., within APEX).</li>
+        <li>Optionally, <strong>Refresh Token</strong> — to enable automatic token renewal.</li>
+      </ul>
+    </li>
+    <li>Click Next.</li>
+  </ol>
+</div>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step B-2</div>
+  <h4>Map the OAC Instance as a Resource (Add Scope)</h4>
+  <p>Scroll down in the application configuration to the <strong>Token Issuance Policy</strong> section and click <strong>Add Scope</strong>. This maps your OAC instance as a resource the token can access.</p>
+  <ol>
+    <li>In the "Add Scope" dialog, you'll see a list of IDCS applications. Select the application that corresponds to your <strong>OAC instance</strong>.</li>
+    <li>This registers the OAC scope (e.g., <code>https://&lt;oac-instance&gt;...urn:opc:resource:consumer::all</code>) in the confidential app.</li>
+    <li>Copy the <strong>scope value</strong> — you will need it when making token requests.</li>
+    <li>Click <strong>Save</strong> and <strong>Activate</strong> the application.</li>
+  </ol>
+  <p>After activation, note the <strong>Client ID</strong> and <strong>Client Secret</strong> from the application's Configuration tab. Store these securely — they are equivalent to a password.</p>
+</div>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step B-3</div>
+  <h4>Create a Minimally-Privileged Service Account</h4>
+  <p>For the Resource Owner Password Credentials grant type, you need a user account whose credentials will be used to obtain tokens. Best practice:</p>
+  <ul>
+    <li>Create a dedicated OAC user (e.g., <code>embedding-svc@yourcompany.com</code>).</li>
+    <li>Assign only the minimum required OAC role — typically <strong>DV Content Author</strong> or a custom role with only the <strong>Use Assistant in Workbooks</strong> permission.</li>
+    <li>Grant access only to the specific datasets or subject areas that should be publicly visible.</li>
+    <li>Never use a personal admin account for token generation.</li>
+  </ul>
+</div>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step B-4</div>
+  <h4>Generate an Access Token (Server-Side)</h4>
+  <p>Use a server-side call to the IDCS token endpoint. Here is the <code>curl</code> command for testing:</p>
+<pre><code><span class="comment"># First, encode the Client ID and Secret as Base64</span>
+echo -n "<span class="string">&lt;Client-ID&gt;</span>:<span class="string">&lt;Client-Secret&gt;</span>" | base64
+
+<span class="comment"># Then request a token using Resource Owner Password Credentials</span>
+curl --request POST \
+  --url https://<span class="string">&lt;IDCS-domain&gt;</span>.identity.oraclecloud.com/oauth2/v1/token \
+  --header 'Authorization: Basic <span class="string">&lt;base64-encoded-clientID:clientSecret&gt;</span>' \
+  --header 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8' \
+  --data 'grant_type=password&amp;username=<span class="string">&lt;service-account-user&gt;</span>&amp;password=<span class="string">&lt;password&gt;</span>&amp;scope=<span class="string">&lt;scope-from-step-B2&gt;</span>'</code></pre>
+
+  <p>A successful response returns a JSON object containing <code>access_token</code>, <code>token_type</code>, <code>expires_in</code>, and optionally <code>refresh_token</code>.</p>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">&#8505;&#65039;</span>
+    <div><strong>Token expiry:</strong> OAC access tokens default to <strong>100 seconds</strong>. For embedding, you typically want to extend this. You can modify the token expiry on the IDCS application that corresponds to your OAC instance using the IDCS SCIM API (PATCH to <code>/admin/v1/Apps/&lt;AppID&gt;</code> with <code>accessTokenExpiry</code> and <code>refreshTokenExpiry</code> values). See <a href="reference.html#token-expiry">Reference</a> for the exact curl command.</div>
+  </div>
+</div>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step B-5</div>
+  <h4>Inject the Token into the Embedding Page</h4>
+  <p>Once you have the access token, inject it into your HTML page using the <code>setEmbeddingConfig</code> API. This tells the embedding framework to use token-based auth instead of session cookies.</p>
+<pre><code><span class="tag">&lt;oracle-analytics-assistant</span>
+  <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
+  <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('user'.'dataset')&amp;quot;]"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
+<span class="tag">&lt;script&gt;</span>
+  <span class="keyword">const</span> token = '<span class="string">&lt;access-token-from-server&gt;</span>';
+
+  oracle.oa.embedding.ready().then((oApp) =&gt; {
+    oApp.setEmbeddingConfig({
+      oSecurityConfig: {
+        eSecurityType: <span class="string">"token"</span>,
+        oOptions: {
+          credentials: <span class="string">""</span>,
+          tokenAuthFunction: <span class="keyword">new</span> Function(<span class="string">"return '"</span> + token + <span class="string">"'"</span>)
+        }
+      }
+    });
+    oApp.applyBindings();
+  });
+<span class="tag">&lt;/script&gt;</span></code></pre>
+
+  <div class="callout callout-danger">
+    <span class="callout-icon">&#10060;</span>
+    <div><strong>For testing only:</strong> The code above hardcodes the token in the HTML. In production, the token should be fetched dynamically from a secure server-side endpoint (see Step B-6). Never commit tokens to source control.</div>
+  </div>
+</div>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step B-6</div>
+  <h4>Production Pattern: Server-Side Token Endpoint</h4>
+  <p>In production, you need a server-side component that generates and serves tokens. Oracle provides two recommended approaches:</p>
+
+  <p><strong>Option 1: OCI Functions + API Gateway</strong></p>
+  <ul>
+    <li>Deploy an OCI Function (Node.js or Python) that calls the IDCS token API with the stored Client ID/Secret.</li>
+    <li>Expose the function via OCI API Gateway with an endpoint like <code>https://api.yourcompany.com/oac-token</code>.</li>
+    <li>The API Gateway can add authentication (API keys, OAuth) and rate limiting.</li>
+    <li>Your embedded page calls this endpoint to retrieve a fresh token before initializing.</li>
+  </ul>
+
+  <p><strong>Option 2: Your own backend API</strong></p>
+  <ul>
+    <li>Add an endpoint to your existing application server (Node.js, Python Flask/FastAPI, Java Spring, etc.) that makes the IDCS token call.</li>
+    <li>Return only the <code>access_token</code> to the client.</li>
+  </ul>
+
+  <p>Here is a conceptual example of the client-side code with dynamic token fetching:</p>
+<pre><code><span class="tag">&lt;script&gt;</span>
+  <span class="keyword">async function</span> initAssistant() {
+    <span class="comment">// Fetch token from your secure server endpoint</span>
+    <span class="keyword">const</span> resp = <span class="keyword">await</span> fetch(<span class="string">'https://api.yourcompany.com/oac-token'</span>);
+    <span class="keyword">const</span> data = <span class="keyword">await</span> resp.json();
+    <span class="keyword">const</span> token = data.access_token;
+
+    <span class="keyword">const</span> oApp = <span class="keyword">await</span> oracle.oa.embedding.ready();
+    oApp.setEmbeddingConfig({
+      oSecurityConfig: {
+        eSecurityType: <span class="string">"token"</span>,
+        oOptions: {
+          credentials: <span class="string">""</span>,
+          tokenAuthFunction: () =&gt; token
+        }
+      }
+    });
+    oApp.applyBindings();
+  }
+
+  initAssistant();
+<span class="tag">&lt;/script&gt;</span></code></pre>
+</div>
+
+<div class="sec-step">
+  <div class="sec-step-num">Step B-7</div>
+  <h4>Handle Token Refresh</h4>
+  <p>Access tokens have limited lifetimes. To prevent the embedded Assistant from failing mid-session, implement a token refresh strategy:</p>
+  <ol>
+    <li>When requesting the initial token, include <code>offline_access</code> in the scope to receive a <strong>refresh token</strong> alongside the access token.</li>
+    <li>Store the refresh token securely on the server side (never expose it to the client).</li>
+    <li>Before the access token expires, use the refresh token to obtain a new access token by calling the IDCS token endpoint with <code>grant_type=refresh_token</code>.</li>
+    <li>Return the new access token to the client and re-inject it.</li>
+  </ol>
+  <p>Alternatively, for simpler setups, you can set a longer token expiry (e.g., 3600 seconds) and have the page periodically fetch a fresh token from your server endpoint. The <code>tokenAuthFunction</code> callback is invoked each time the embedding framework needs a token, so you can make it return a dynamically refreshed value.</p>
+</div>
+
+<!-- ============================================================ -->
+<!-- COMPARISON -->
+<!-- ============================================================ -->
+<div class="section-divider" id="comparison">
+  <div class="label">Decision Guide</div>
+  <h2>Choosing the Right Model</h2>
+</div>
+
+<table class="comparison-table">
+  <thead>
+    <tr>
+      <th>Criteria</th>
+      <th>Browser-Based (Session)</th>
+      <th>Token-Based (OAuth 2.0)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>User login required?</strong></td>
+      <td>Yes — user must have active OAC session</td>
+      <td>No — token is obtained server-side</td>
+    </tr>
+    <tr>
+      <td><strong>OAC account per user?</strong></td>
+      <td>Yes — every viewer needs an OAC account</td>
+      <td>No — a single service account can serve all viewers</td>
+    </tr>
+    <tr>
+      <td><strong>Third-party cookie issue?</strong></td>
+      <td>Yes — browsers may block cross-domain cookies</td>
+      <td>None — no cookies are used for auth</td>
+    </tr>
+    <tr>
+      <td><strong>Per-user security (row-level)?</strong></td>
+      <td>Yes — each user's identity is preserved</td>
+      <td>Depends — token identity determines access; for per-user security, use authorization code grant</td>
+    </tr>
+    <tr>
+      <td><strong>Setup complexity</strong></td>
+      <td>Low — just Safe Domains</td>
+      <td>Medium-High — IDCS app, token endpoint, refresh logic</td>
+    </tr>
+    <tr>
+      <td><strong>Best for</strong></td>
+      <td>Internal portals with SSO</td>
+      <td>Public sites, kiosks, external portals</td>
+    </tr>
+    <tr>
+      <td><strong>Oracle recommendation</strong></td>
+      <td>Good for internal / dev</td>
+      <td><strong>Recommended for production</strong></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout callout-info">
+  <span class="callout-icon">&#128161;</span>
+  <div><strong>Hybrid approach:</strong> In enterprise deployments, it's common to use browser-based auth for internal users (who already have SSO) and token-based auth for external-facing embedded analytics — both can coexist across different pages.</div>
+</div>
+
+<!-- ============================================================ -->
+<!-- SAFE DOMAINS DEEP DIVE -->
+<!-- ============================================================ -->
+<div class="section-divider" id="safe-domains">
+  <div class="label">Required for Both Models</div>
+  <h2>Safe Domains Configuration</h2>
+</div>
+
+<p>Regardless of which authentication model you choose, you must register your embedding page's origin in OAC's Safe Domains. This is OAC's CORS allowlist — it tells OAC which external origins are permitted to embed analytics content.</p>
+
+<h3>What to Register</h3>
+<ul>
+  <li><strong>Local development:</strong> <code>http://localhost:8000</code> (or whichever port your local server uses).</li>
+  <li><strong>Staging:</strong> <code>https://staging.yourcompany.com</code></li>
+  <li><strong>Production:</strong> <code>https://portal.yourcompany.com</code></li>
+</ul>
+
+<h3>Resource Types to Enable</h3>
+<p>When adding a domain, OAC lets you select which resource types to allow. For embedding, you must at minimum enable:</p>
+<ul>
+  <li><strong>Embedding</strong> — allows <code>&lt;oracle-analytics-assistant&gt;</code> and <code>&lt;oracle-dv&gt;</code> tags to render.</li>
+  <li><strong>Scripts</strong> — allows the page to load <code>embedding.js</code>.</li>
+</ul>
+
+<div class="callout callout-warn">
+  <span class="callout-icon">&#9888;&#65039;</span>
+  <div><strong>After adding a Safe Domain,</strong> users must sign out and sign back in to OAC for the change to take effect. During development, refreshing the page is usually sufficient since no cached session is involved.</div>
+</div>
+
+<h3>Vanity URLs</h3>
+<p>If third-party cookie blocking is a concern, configuring a <strong>vanity URL</strong> for OAC can help. A vanity URL maps OAC to a subdomain under your organization's domain (e.g., <code>analytics.yourcompany.com</code>). When the embedding page and OAC share the same top-level domain, browser cookie restrictions are typically not triggered.</p>
+
+<div class="pagination">
+  <a href="setup.html">
+    <small>&#8592; Previous</small>
+    <span>Quick-Start Setup</span>
+  </a>
+  <a href="exercises.html" style="text-align:right;">
+    <small>Next &#8594;</small>
+    <span>Hands-On Exercises</span>
+  </a>
+</div>
+
+</main>
+
+<footer>
+  OAC AI Assistant Embedding Workshop &mdash; Ravi Bhuma
+</footer>
+
+</body>
+</html>

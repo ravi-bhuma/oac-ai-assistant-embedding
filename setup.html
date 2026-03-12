@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 01: Quick-Start Setup — OAC AI Assistant Embedding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-card: #1a2236;
+  --bg-card-hover: #1f2a42;
+  --accent-oracle: #c74634;
+  --accent-gold: #f59e0b;
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-purple: #8b5cf6;
+  --accent-cyan: #06b6d4;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: #1e293b;
+  --border-accent: #334155;
+  --code-bg: #0f172a;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+}
+a { color: var(--accent-blue); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--accent-cyan); }
+
+/* Top nav */
+.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(10,14,26,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.topnav-brand {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--text-primary);
+}
+.topnav-brand span { color: var(--accent-oracle); }
+.topnav-links { display: flex; gap: 1.5rem; font-size: 0.82rem; }
+.topnav-links a { color: var(--text-muted); }
+.topnav-links a:hover { color: var(--text-primary); }
+.topnav-links a.active { color: var(--accent-oracle); }
+
+/* Page header */
+.page-header {
+  padding: 3rem 2rem 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.page-header .module-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent-oracle);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.5rem;
+}
+.page-header h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.75rem;
+}
+.page-header .subtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+}
+
+/* Content */
+.content { max-width: 900px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+/* Steps */
+.step {
+  margin-bottom: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+.step-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+.step-num {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--accent-oracle);
+  background: rgba(199,70,52,0.12);
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.step h2 {
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+.step p, .step li {
+  font-size: 0.92rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.6rem;
+}
+.step ul, .step ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+
+/* Code blocks */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  margin: 1rem 0;
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  line-height: 1.7;
+  color: #e2e8f0;
+  position: relative;
+}
+pre .comment { color: #64748b; }
+pre .tag { color: #f472b6; }
+pre .attr { color: #a78bfa; }
+pre .string { color: #34d399; }
+pre .keyword { color: #60a5fa; }
+
+/* Callout boxes */
+.callout {
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin: 1rem 0;
+  font-size: 0.88rem;
+  line-height: 1.6;
+  display: flex;
+  gap: 0.75rem;
+}
+.callout-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.1rem; }
+.callout-info {
+  background: rgba(59,130,246,0.08);
+  border: 1px solid rgba(59,130,246,0.2);
+  color: #93c5fd;
+}
+.callout-warn {
+  background: rgba(245,158,11,0.08);
+  border: 1px solid rgba(245,158,11,0.2);
+  color: #fcd34d;
+}
+.callout-success {
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.2);
+  color: #6ee7b7;
+}
+.callout-danger {
+  background: rgba(239,68,68,0.08);
+  border: 1px solid rgba(239,68,68,0.2);
+  color: #fca5a5;
+}
+
+/* inline code */
+code {
+  font-family: var(--font-mono);
+  font-size: 0.84em;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+}
+pre code { background: none; border: none; padding: 0; }
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+.pagination a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.75rem 1.25rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: all 0.2s;
+  font-size: 0.85rem;
+}
+.pagination a:hover { border-color: var(--border-accent); background: var(--bg-card); }
+.pagination a small { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.08em; }
+
+footer {
+  text-align: center;
+  padding: 2rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+@media (max-width: 768px) {
+  .topnav { padding: 0.75rem 1rem; }
+  .topnav-links { gap: 0.75rem; font-size: 0.75rem; }
+  .page-header, .content { padding-left: 1.5rem; padding-right: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav-brand"><span>OAC</span> Embedding Workshop</a>
+  <div class="topnav-links">
+    <a href="setup.html" class="active">Setup</a>
+    <a href="security.html">Security</a>
+    <a href="exercises.html">Exercises</a>
+    <a href="reference.html">Reference</a>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="module-label">Module 01</div>
+  <h1>Quick-Start Setup</h1>
+  <p class="subtitle">Build a working embedded OAC AI Assistant from a blank file to a running page in six steps. No frameworks, no build tools — just a text editor and Python.</p>
+</header>
+
+<main class="content">
+
+<div class="callout callout-info" style="margin-bottom: 2rem;">
+  <span class="callout-icon">&#128161;</span>
+  <div>
+    <strong>Why start from scratch?</strong> In most real-world scenarios, you already have an existing portal, intranet, or web application — you won't be creating a new HTML page from a blank file. This quick-start builds a standalone page so you can <strong>learn each piece in isolation</strong>, verify it works, and understand what each component does. Once you've completed this module, you'll know exactly which code fragments to place into your existing application:
+    <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+      <li>The <code>&lt;script&gt;</code> tag for <code>embedding.js</code> goes in your page's <code>&lt;head&gt;</code> section</li>
+      <li>The CSS rules merge into your existing stylesheet</li>
+      <li>The <code>&lt;oracle-analytics-assistant&gt;</code> tag drops into wherever you want the Assistant to appear in your page layout</li>
+      <li>The <code>applyBindings()</code> init script goes at the bottom of your page or in your app's initialization logic</li>
+    </ul>
+  </div>
+</div>
+
+<!-- STEP 1 -->
+<section class="step" id="step1">
+  <div class="step-header">
+    <span class="step-num">Step 1</span>
+    <h2>Create the HTML Skeleton</h2>
+  </div>
+  <p>Every HTML page starts with a skeleton — the bare minimum structure a browser expects. You will add the OAC pieces on top of this in subsequent steps.</p>
+  <p>Open your text editor and create a new file named <code>oac-ai-assistant.html</code>. Paste the following code:</p>
+<pre><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">dir</span>=<span class="string">"ltr"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">&#8505;&#65039;</span>
+    <div><strong>Why <code>dir="ltr"</code>?</strong> This attribute controls text layout direction. OAC's embedded components require it to render correctly. Use <code>ltr</code> (left-to-right) for English and most Western languages. For Arabic or Hebrew, use <code>rtl</code>. Never use <code>auto</code> — it is not supported.</div>
+  </div>
+
+  <div class="callout callout-success">
+    <span class="callout-icon">&#9989;</span>
+    <div><strong>Checkpoint:</strong> Open the file in Chrome. Press F12 to open DevTools, click the Elements tab, and confirm you see <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, and <code>&lt;body&gt;</code> with no red error messages in the Console tab.</div>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="step" id="step2">
+  <div class="step-header">
+    <span class="step-num">Step 2</span>
+    <h2>Load the Embedding Library</h2>
+  </div>
+  <p>Oracle Analytics Cloud ships a JavaScript library (<code>embedding.js</code>) that draws OAC components inside other web pages. You load it with a single <code>&lt;script&gt;</code> tag. Think of it as "plugging in" OAC to your page.</p>
+  <p>Add the following inside your <code>&lt;head&gt;</code>, right after the <code>&lt;meta charset&gt;</code> line:</p>
+<pre><code><span class="tag">&lt;script</span>
+  <span class="attr">src</span>=<span class="string">"https://&lt;your-oac-host&gt;/public/dv/v2/embedding/auto/embedding.js"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/script&gt;</span></code></pre>
+
+  <p>Replace <code>&lt;your-oac-host&gt;</code> with your actual OAC instance URL. For example:</p>
+<pre><code>https://oacp-idseylbmv0mm-ia.analytics.ocp.oraclecloud.com/public/dv/v2/embedding/auto/embedding.js</code></pre>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">&#8505;&#65039;</span>
+    <div><strong>Embedding modes:</strong> The URL path includes an <em>embedding mode</em>. Use <code>auto</code> to let OAC auto-detect JET version differences (recommended for APEX). Use <code>standalone</code> if not using Oracle JET. Use <code>jet</code> only if your host app is already a JET application. The <code>v2</code> in the path is the embedding framework version.</div>
+  </div>
+
+  <div class="callout callout-danger">
+    <span class="callout-icon">&#10060;</span>
+    <div><strong>Common Mistake:</strong> Do not download <code>embedding.js</code> locally. Always reference it from your OAC instance — it is updated with each OAC patch and must stay in sync.</div>
+  </div>
+
+  <div class="callout callout-success">
+    <span class="callout-icon">&#9989;</span>
+    <div><strong>Checkpoint:</strong> Open DevTools &#8594; Network tab, refresh the page, and filter for "embedding.js". You should see it listed with a <strong>200</strong> status. If it shows 404, check the URL for typos.</div>
+  </div>
+</section>
+
+<!-- STEP 3 -->
+<section class="step" id="step3">
+  <div class="step-header">
+    <span class="step-num">Step 3</span>
+    <h2>Set Up the Layout</h2>
+  </div>
+  <p>Without a few lines of CSS, the Assistant panel can end up tiny or cause double scrollbars. These styles make it fill the entire browser window.</p>
+  <p>Add a <code>&lt;style&gt;</code> block right after the <code>&lt;/script&gt;</code> tag, still inside <code>&lt;head&gt;</code>:</p>
+<pre><code><span class="tag">&lt;style&gt;</span>
+  html, body {
+    <span class="attr">margin</span>: <span class="string">0</span>;
+    <span class="attr">height</span>: <span class="string">100%</span>;
+  }
+  oracle-analytics-assistant {
+    <span class="attr">width</span>: <span class="string">100%</span>;
+    <span class="attr">height</span>: <span class="string">100%</span>;
+    <span class="attr">display</span>: <span class="string">block</span>;
+  }
+<span class="tag">&lt;/style&gt;</span></code></pre>
+
+  <p><strong>Why each line matters:</strong></p>
+  <ul>
+    <li><code>margin: 0</code> — removes default browser margins so the Assistant touches the edges.</li>
+    <li><code>height: 100%</code> — stretches both <code>&lt;html&gt;</code> and <code>&lt;body&gt;</code> to full viewport height.</li>
+    <li><code>oracle-analytics-assistant</code> — a custom element that OAC creates. You style it like any HTML tag.</li>
+    <li><code>display: block</code> — custom elements default to <code>inline</code>; block makes them fill the width.</li>
+  </ul>
+</section>
+
+<!-- STEP 4 -->
+<section class="step" id="step4">
+  <div class="step-header">
+    <span class="step-num">Step 4</span>
+    <h2>Embed the AI Assistant</h2>
+  </div>
+  <p>This is the main event. A single custom tag — <code>&lt;oracle-analytics-assistant&gt;</code> — tells OAC to draw its AI chat panel on your page.</p>
+  <p>Add the following inside your <code>&lt;body&gt;</code>:</p>
+<pre><code><span class="tag">&lt;oracle-analytics-assistant</span>
+  <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
+  <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('&lt;user&gt;'.'&lt;dataset-name&gt;')&amp;quot;]"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/oracle-analytics-assistant&gt;</span></code></pre>
+
+  <p><strong>Understanding <code>src-data</code>:</strong> The value decodes to <code>XSA('user'.'dataset')</code> where the first part is the OAC user who owns the dataset and the second is the dataset name. The <code>&amp;quot;</code> codes are HTML-escaped double quotes — the browser converts them automatically.</p>
+
+  <div class="callout callout-warn">
+    <span class="callout-icon">&#9888;&#65039;</span>
+    <div><strong>Do not</strong> remove the <code>&amp;quot;</code> entities or replace them with regular double quotes — that will break the attribute parsing. Also ensure the dataset name matches exactly (case-sensitive) what appears in OAC.</div>
+  </div>
+</section>
+
+<!-- STEP 5 -->
+<section class="step" id="step5">
+  <div class="step-header">
+    <span class="step-num">Step 5</span>
+    <h2>Initialize (Turn It On)</h2>
+  </div>
+  <p>The Assistant tag is in the page but not active yet. This script "wakes it up" by telling the embedding library to find all OAC components and connect them.</p>
+  <p>Add this script <strong>after</strong> the <code>&lt;/oracle-analytics-assistant&gt;</code> tag, still inside <code>&lt;body&gt;</code>:</p>
+<pre><code><span class="tag">&lt;script&gt;</span>
+  oracle.oa.embedding.ready().then(<span class="keyword">function</span> (oApp) {
+    oApp.applyBindings();
+  });
+<span class="tag">&lt;/script&gt;</span></code></pre>
+
+  <p><strong>What happens here:</strong></p>
+  <ul>
+    <li><code>oracle.oa.embedding.ready()</code> — waits until the embedding library has fully loaded.</li>
+    <li><code>.then(function (oApp) { ... })</code> — runs your code once the library is ready.</li>
+    <li><code>oApp.applyBindings()</code> — scans the DOM for all <code>&lt;oracle-analytics-assistant&gt;</code> (and <code>&lt;oracle-dv&gt;</code>) tags and activates them.</li>
+  </ul>
+
+  <div class="callout callout-danger">
+    <span class="callout-icon">&#10060;</span>
+    <div><strong>Ordering matters:</strong> This script must come <strong>after</strong> the <code>&lt;oracle-analytics-assistant&gt;</code> tag in the HTML. If you place it before, <code>applyBindings()</code> runs before the element exists and nothing renders.</div>
+  </div>
+</section>
+
+<!-- STEP 6 -->
+<section class="step" id="step6">
+  <div class="step-header">
+    <span class="step-num">Step 6</span>
+    <h2>Serve Locally with Python</h2>
+  </div>
+  <p>Browsers block embedded analytics when you open an HTML file directly via <code>file://</code>. You need to serve it from a local web server. Python includes one out of the box — but first, let's make sure Python is installed.</p>
+
+  <h3>6a — Check if Python Is Already Installed</h3>
+  <p>Open a terminal (Mac/Linux) or Command Prompt / PowerShell (Windows) and run:</p>
+
+  <p><strong>On Windows:</strong></p>
+<pre><code>python --version</code></pre>
+
+  <p><strong>On macOS / Linux:</strong></p>
+<pre><code>python3 --version</code></pre>
+
+  <p>If you see something like <code>Python 3.14.2</code> (any 3.x version), you're good — skip to <strong>6c</strong>.</p>
+
+  <div class="callout callout-warn">
+    <span class="callout-icon">&#9888;&#65039;</span>
+    <div><strong>Windows uses <code>python</code>, not <code>python3</code>.</strong> If you see <code>'python3' is not recognized as an internal or external command'</code>, that's normal on Windows — use <code>python</code> instead. Throughout this guide, replace <code>python3</code> with <code>python</code> on Windows.</div>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">&#8505;&#65039;</span>
+    <div>If neither <code>python</code> nor <code>python3</code> returns a version number, Python is not installed. Follow Step 6b below.</div>
+  </div>
+
+  <h3>6b — Install Python (If Not Present)</h3>
+
+  <p><strong>Windows:</strong></p>
+  <ol>
+    <li>Go to <a href="https://www.python.org/downloads/" target="_blank">python.org/downloads</a> and click <strong>Download Python 3.x</strong>.</li>
+    <li>Run the installer. <strong>Important:</strong> Check the box that says <strong>"Add python.exe to PATH"</strong> at the bottom of the first screen — this is the most common mistake.</li>
+    <li>Click <strong>Install Now</strong> and wait for it to finish.</li>
+    <li>Close and reopen your Command Prompt, then verify:
+<pre><code>python --version
+<span class="comment"># Should show: Python 3.x.x</span></code></pre>
+    </li>
+  </ol>
+
+  <p><strong>macOS:</strong></p>
+  <ol>
+    <li>macOS often ships with Python 3 pre-installed. If not, the easiest way is via Homebrew:
+<pre><code><span class="comment"># Install Homebrew (if not already installed)</span>
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+<span class="comment"># Install Python</span>
+brew install python</code></pre>
+    </li>
+    <li>Verify:
+<pre><code>python3 --version</code></pre>
+    </li>
+  </ol>
+
+  <p><strong>Linux (Ubuntu/Debian):</strong></p>
+<pre><code>sudo apt update
+sudo apt install python3 -y
+python3 --version</code></pre>
+
+  <h3>6c — Test Python Works</h3>
+  <p>Before serving files, do a quick sanity check to confirm Python runs correctly:</p>
+
+  <p><strong>On Windows:</strong></p>
+<pre><code>python -c "print('Python is ready!')"</code></pre>
+
+  <p><strong>On macOS / Linux:</strong></p>
+<pre><code>python3 -c "print('Python is ready!')"</code></pre>
+  <p>You should see <code>Python is ready!</code> printed. If so, you're all set.</p>
+
+  <h3>6d — Start the Local Web Server</h3>
+  <p>Navigate to the folder where your HTML file is saved, then start the server:</p>
+
+  <p><strong>On Windows:</strong></p>
+<pre><code>cd C:\Users\YourName\Desktop\oac-workshop
+
+python -m http.server 8000</code></pre>
+
+  <p><strong>On macOS / Linux:</strong></p>
+<pre><code>cd ~/Desktop/oac-workshop
+
+python3 -m http.server 8000</code></pre>
+  <p>You should see output like:</p>
+<pre><code>Serving HTTP on :: port 8000 (http://[::]:8000/) ...</code></pre>
+
+  <p>As you open pages in Chrome, the terminal will log every request:</p>
+<pre><code>Serving HTTP on :: port 8000 (http://[::]:8000/) ...
+::1 - - [11/Mar/2026 18:51:44] "GET /oac-ai-assistant.html HTTP/1.1" 200 -
+::1 - - [11/Mar/2026 18:53:56] "GET /oac-ai-assistant.html HTTP/1.1" 200 -</code></pre>
+
+  <p><strong>Reading the log:</strong> A <code>200</code> means the file was served successfully. If you see <code>404</code>, it means the file was not found — check your filename and make sure you're in the right folder.</p>
+
+  <div class="callout callout-danger">
+    <span class="callout-icon">&#10060;</span>
+    <div><strong>The server must stay running.</strong> This is the most common beginner mistake — the server only works while the terminal window is open and the process is active. If you close the terminal, minimize it and forget, or accidentally press <strong>Ctrl + C</strong>, the server stops and your page will show a "connection refused" error in Chrome. If that happens, just re-run the same <code>python -m http.server 8000</code> command to start it again.</div>
+  </div>
+
+  <h3>6e — Open the Page in Chrome</h3>
+  <p>Open Google Chrome and navigate to:</p>
+<pre><code>http://localhost:8000/oac-ai-assistant.html</code></pre>
+  <p>You should see a blank or loading page — that's expected until you add the Safe Domain in OAC (next sub-step).</p>
+
+  <h3>6f — Register the Safe Domain in OAC</h3>
+  <p>OAC will block the embedded Assistant unless your local server origin is registered:</p>
+  <ol>
+    <li>In a new Chrome tab, sign in to your OAC instance.</li>
+    <li>Click the hamburger menu and go to <strong>Console &#8594; Administration &#8594; Safe Domains</strong>.</li>
+    <li>Click <strong>Add Domain</strong> and enter exactly: <code>http://localhost:8000</code></li>
+    <li>Check the <strong>Embedding</strong> checkbox.</li>
+    <li>Click <strong>Save</strong>.</li>
+  </ol>
+
+  <div class="callout callout-danger">
+    <span class="callout-icon">&#10060;</span>
+    <div><strong>The origin must match exactly</strong> — protocol (<code>http</code>, not <code>https</code>), hostname (<code>localhost</code>), and port (<code>8000</code>). If you use a different port, update the Safe Domain entry accordingly.</div>
+  </div>
+
+  <h3>6g — Verify the AI Assistant Loads</h3>
+  <ol>
+    <li>Go back to your <code>http://localhost:8000/oac-ai-assistant.html</code> tab.</li>
+    <li>Refresh the page.</li>
+    <li>If using browser-based auth, make sure you are logged into OAC in another tab.</li>
+    <li>The AI Assistant chat interface should appear and begin loading.</li>
+  </ol>
+
+  <div class="callout callout-success">
+    <span class="callout-icon">&#9989;</span>
+    <div><strong>Checkpoint:</strong> The URL bar shows <code>http://localhost:8000/oac-ai-assistant.html</code> (no <code>file://</code>). The AI Assistant renders and you can type a question. If the Assistant doesn't appear, open DevTools (F12) &#8594; Console tab and check for CORS or 404 errors.</div>
+  </div>
+
+  <p><strong>Alternative: VS Code Live Server</strong></p>
+  <p>If you use VS Code, you can skip the Python server entirely. Install the <strong>Live Server</strong> extension, right-click your HTML file, and select "Open with Live Server". Default port is 5500 — add <code>http://localhost:5500</code> to OAC Safe Domains instead.</p>
+</section>
+
+<section class="step" id="complete-file">
+  <div class="step-header">
+    <span class="step-num">Complete</span>
+    <h2>Your Finished File</h2>
+  </div>
+  <p>If everything is working, your file should look like this (with your actual OAC URL and dataset details substituted):</p>
+<pre><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">dir</span>=<span class="string">"ltr"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span><span class="tag">&gt;</span>
+  <span class="comment">&lt;!-- Step 2: Load the embedding library --&gt;</span>
+  <span class="tag">&lt;script</span>
+    <span class="attr">src</span>=<span class="string">"https://&lt;your-oac-host&gt;/public/dv/v2/embedding/auto/embedding.js"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/script&gt;</span>
+  <span class="comment">&lt;!-- Step 3: Layout styles --&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    html, body {
+      margin: 0;
+      height: 100%;
+    }
+    oracle-analytics-assistant {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="comment">&lt;!-- Step 4: Embed the Assistant --&gt;</span>
+  <span class="tag">&lt;oracle-analytics-assistant</span>
+    <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
+    <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('&lt;user&gt;'.'&lt;dataset&gt;')&amp;quot;]"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
+  <span class="comment">&lt;!-- Step 5: Initialize --&gt;</span>
+  <span class="tag">&lt;script&gt;</span>
+    oracle.oa.embedding.ready().then(<span class="keyword">function</span> (oApp) {
+      oApp.applyBindings();
+    });
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+</section>
+
+<section class="step" id="embed-into-app">
+  <div class="step-header">
+    <span class="step-num">Next</span>
+    <h2>Embed into Your Existing Application</h2>
+  </div>
+  <p>Now that you've seen how the standalone page works, here's how to integrate the AI Assistant into your existing portal or web application. You need to place four code fragments into the right locations:</p>
+
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1rem 0;">
+    <p style="margin-bottom: 1rem;"><strong>1. Add the embedding library to your <code>&lt;head&gt;</code></strong></p>
+    <p>Place this alongside your existing <code>&lt;script&gt;</code> and <code>&lt;link&gt;</code> tags. It does not conflict with other libraries.</p>
+<pre><code><span class="tag">&lt;script</span>
+  <span class="attr">src</span>=<span class="string">"https://&lt;your-oac-host&gt;/public/dv/v2/embedding/auto/embedding.js"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/script&gt;</span></code></pre>
+  </div>
+
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1rem 0;">
+    <p style="margin-bottom: 1rem;"><strong>2. Add CSS for the assistant container</strong></p>
+    <p>Merge these into your existing stylesheet. Adjust <code>width</code> and <code>height</code> to fit your layout — it doesn't have to be 100%. For example, a sidebar panel might use <code>width: 400px; height: 100vh;</code>.</p>
+<pre><code>oracle-analytics-assistant {
+  width: 100%;
+  height: 600px;  <span class="comment">/* or any size that fits your layout */</span>
+  display: block;
+}</code></pre>
+  </div>
+
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1rem 0;">
+    <p style="margin-bottom: 1rem;"><strong>3. Place the assistant tag in your page</strong></p>
+    <p>Drop it into any <code>&lt;div&gt;</code> container in your existing page layout — a sidebar, a tab panel, a modal, or a dedicated section.</p>
+<pre><code><span class="comment">&lt;!-- Inside your existing page layout --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"your-assistant-container"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;oracle-analytics-assistant</span>
+    <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
+    <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('&lt;user&gt;'.'&lt;dataset&gt;')&amp;quot;]"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
+<span class="tag">&lt;/div&gt;</span></code></pre>
+  </div>
+
+  <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin: 1rem 0;">
+    <p style="margin-bottom: 1rem;"><strong>4. Initialize — either inline or in your app's startup</strong></p>
+    <p>If your application already has an initialization routine (e.g., <code>DOMContentLoaded</code>, Angular <code>ngOnInit</code>, React <code>useEffect</code>), call <code>applyBindings()</code> from there. Otherwise, a <code>&lt;script&gt;</code> tag at the bottom of the page works fine.</p>
+<pre><code><span class="comment">&lt;!-- Option A: Inline script at the bottom of your page --&gt;</span>
+<span class="tag">&lt;script&gt;</span>
+  oracle.oa.embedding.ready().then(oApp =&gt; oApp.applyBindings());
+<span class="tag">&lt;/script&gt;</span>
+
+<span class="comment">&lt;!-- Option B: Inside your app's existing init logic --&gt;</span>
+<span class="tag">&lt;script&gt;</span>
+  document.addEventListener('DOMContentLoaded', () =&gt; {
+    oracle.oa.embedding.ready().then(oApp =&gt; oApp.applyBindings());
+  });
+<span class="tag">&lt;/script&gt;</span></code></pre>
+  </div>
+
+  <div class="callout callout-warn">
+    <span class="callout-icon">&#9888;&#65039;</span>
+    <div><strong>Don't forget:</strong> Your application's production domain must be registered in OAC Safe Domains with the <strong>Embedding</strong> checkbox enabled. See <a href="reference.html#safe-domains-prod">Module 04: Reference &amp; Resources (reference.html)</a> for the exact steps.</div>
+  </div>
+
+  <div class="callout callout-info">
+    <span class="callout-icon">&#8505;&#65039;</span>
+    <div><strong>Authentication in your app:</strong> If your portal already uses SSO with IDCS, browser-based auth will work seamlessly — no extra code needed. If your users don't have OAC accounts, use token-based auth instead. See <a href="security.html">Module 02: Security Deep-Dive (security.html)</a> for both approaches.</div>
+  </div>
+</section>
+
+<div class="pagination">
+  <a href="index.html">
+    <small>&#8592; Previous</small>
+    <span>Home</span>
+  </a>
+  <a href="security.html" style="text-align:right;">
+    <small>Next &#8594;</small>
+    <span>Security Deep-Dive</span>
+  </a>
+</div>
+
+</main>
+
+<footer>
+  OAC AI Assistant Embedding Workshop &mdash; Ravi Bhuma
+</footer>
+
+</body>
+</html>

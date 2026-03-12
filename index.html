@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OAC AI Assistant Embedding Workshop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-primary: #0a0e1a;
+  --bg-secondary: #111827;
+  --bg-card: #1a2236;
+  --bg-card-hover: #1f2a42;
+  --accent-oracle: #c74634;
+  --accent-gold: #f59e0b;
+  --accent-blue: #3b82f6;
+  --accent-green: #10b981;
+  --accent-purple: #8b5cf6;
+  --accent-cyan: #06b6d4;
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: #1e293b;
+  --border-accent: #334155;
+  --code-bg: #0f172a;
+  --font-body: 'Plus Jakarta Sans', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+a { color: var(--accent-blue); text-decoration: none; transition: color 0.2s; }
+a:hover { color: var(--accent-cyan); }
+
+/* Noise overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding: 6rem 2rem 4rem;
+  text-align: center;
+  background: linear-gradient(160deg, #0a0e1a 0%, #131b30 40%, #1a1020 70%, #0a0e1a 100%);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%; left: -50%; width: 200%; height: 200%;
+  background: radial-gradient(ellipse at 30% 20%, rgba(199,70,52,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(59,130,246,0.06) 0%, transparent 50%);
+  animation: heroGlow 12s ease-in-out infinite alternate;
+}
+@keyframes heroGlow {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-3%, 3%) scale(1.05); }
+}
+.hero-content { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 1rem;
+  border: 1px solid var(--accent-oracle);
+  border-radius: 100px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-oracle);
+  margin-bottom: 1.5rem;
+  animation: fadeInDown 0.6s ease-out;
+}
+.badge::before {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent-oracle);
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+@keyframes fadeInDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+h1 {
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+  animation: fadeInUp 0.7s ease-out 0.1s both;
+}
+h1 .highlight {
+  background: linear-gradient(135deg, var(--accent-oracle), #e06b5e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-subtitle {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 680px;
+  margin: 0 auto 2rem;
+  animation: fadeInUp 0.7s ease-out 0.25s both;
+}
+.hero-meta {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 2rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  animation: fadeInUp 0.7s ease-out 0.4s both;
+}
+.hero-meta span { display: flex; align-items: center; gap: 0.4rem; }
+
+/* Navigation cards */
+.nav-section {
+  max-width: 1100px;
+  margin: -2rem auto 4rem;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+}
+.nav-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+.nav-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  cursor: pointer;
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+.nav-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: 16px 16px 0 0;
+  transition: height 0.3s ease;
+}
+.nav-card:nth-child(1)::before { background: linear-gradient(90deg, var(--accent-oracle), var(--accent-gold)); }
+.nav-card:nth-child(2)::before { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+.nav-card:nth-child(3)::before { background: linear-gradient(90deg, var(--accent-green), var(--accent-blue)); }
+.nav-card:nth-child(4)::before { background: linear-gradient(90deg, var(--accent-purple), var(--accent-oracle)); }
+.nav-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+}
+.nav-card:hover::before { height: 4px; }
+.card-number {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.75rem;
+}
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.75rem;
+  display: block;
+}
+.nav-card h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+.nav-card p {
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.card-tag {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.tag-beginner { background: rgba(16,185,129,0.15); color: var(--accent-green); }
+.tag-intermediate { background: rgba(245,158,11,0.15); color: var(--accent-gold); }
+.tag-advanced { background: rgba(199,70,52,0.15); color: var(--accent-oracle); }
+.tag-reference { background: rgba(139,92,246,0.15); color: var(--accent-purple); }
+
+/* Overview section */
+.section { max-width: 900px; margin: 0 auto; padding: 3rem 2rem; }
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--accent-oracle);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 0.75rem;
+}
+.section h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 1.25rem;
+  letter-spacing: -0.01em;
+}
+.section p, .section li {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.75rem;
+}
+
+/* Advantages grid */
+.advantages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+.advantage-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: border-color 0.3s;
+}
+.advantage-item:hover { border-color: var(--border-accent); }
+.advantage-item .icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+.advantage-item h4 { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.35rem; }
+.advantage-item p { font-size: 0.82rem; color: var(--text-muted); margin: 0; }
+
+/* Architecture diagram — interactive */
+.arch-diagram {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0;
+  margin: 2rem 0;
+  overflow: hidden;
+}
+.flow-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+}
+.flow-tab {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  position: relative;
+}
+.flow-tab:hover { color: var(--text-secondary); background: rgba(255,255,255,0.02); }
+.flow-tab.active {
+  color: var(--accent-oracle);
+  background: rgba(199,70,52,0.06);
+}
+.flow-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--accent-oracle);
+}
+.flow-panel { display: none; padding: 2rem; }
+.flow-panel.active { display: block; }
+.flow-title {
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+.interactive-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+}
+.interactive-flow.vertical {
+  flex-direction: column;
+  gap: 0;
+  max-width: 400px;
+  margin: 0 auto;
+}
+.iflow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 1rem 0.75rem;
+  border-radius: 12px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  position: relative;
+  min-width: 120px;
+}
+.iflow-step.wide { min-width: 280px; width: 100%; }
+.iflow-step:hover {
+  background: rgba(199,70,52,0.06);
+  border-color: var(--border-accent);
+}
+.iflow-step.active {
+  background: rgba(199,70,52,0.1);
+  border-color: var(--accent-oracle);
+  box-shadow: 0 0 20px rgba(199,70,52,0.1);
+}
+.iflow-num {
+  width: 22px; height: 22px;
+  border-radius: 50%;
+  background: var(--accent-oracle);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.4rem;
+}
+.iflow-icon { font-size: 1.5rem; margin-bottom: 0.3rem; }
+.iflow-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+.iflow-sub {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+.iflow-connector {
+  width: 36px;
+  flex-shrink: 0;
+  color: var(--accent-oracle);
+  opacity: 0.5;
+}
+.iflow-connector svg { width: 100%; display: block; }
+.iflow-connector-v {
+  height: 24px;
+  color: var(--accent-oracle);
+  opacity: 0.5;
+  display: flex;
+  justify-content: center;
+}
+.iflow-connector-v svg { height: 100%; width: 20px; }
+.iflow-detail {
+  margin-top: 1.5rem;
+  padding: 1rem 1.25rem;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  min-height: 60px;
+}
+.iflow-detail-content {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+.iflow-detail-content code {
+  font-size: 0.8em;
+  background: rgba(199,70,52,0.1);
+  border-color: rgba(199,70,52,0.2);
+  color: #f0a090;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+footer a { color: var(--accent-oracle); }
+
+/* Auth comparison table */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.85rem;
+}
+.comparison-table th, .comparison-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+.comparison-table th {
+  background: var(--bg-card);
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+.comparison-table td { color: var(--text-secondary); }
+.comparison-table tr:hover td { background: rgba(30,41,59,0.5); }
+
+@media (max-width: 768px) {
+  .hero { padding: 4rem 1.5rem 3rem; }
+  .nav-grid { grid-template-columns: 1fr; }
+  .hero-meta { gap: 1rem; }
+  .advantages-grid { grid-template-columns: 1fr; }
+  .interactive-flow:not(.vertical) {
+    flex-direction: column;
+  }
+  .iflow-connector {
+    transform: rotate(90deg);
+    width: 24px;
+    height: 36px;
+  }
+  .iflow-step { min-width: unset; width: 100%; }
+  .flow-tabs { flex-wrap: wrap; }
+  .flow-tab { font-size: 0.75rem; padding: 0.6rem 0.5rem; }
+}
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-content">
+    <span class="badge">Workshop Manual</span>
+    <h1>Embedding the OAC <span class="highlight">AI Assistant</span> into Your Web Applications</h1>
+    <p class="hero-subtitle">A comprehensive hands-on workshop covering setup, security architecture, authentication deep-dives, and production deployment of the Oracle Analytics Cloud AI Assistant embedding framework.</p>
+    <div class="hero-meta">
+      <span>&#128337; 90 – 120 minutes</span>
+      <span>&#128218; 4 modules</span>
+      <span>&#128100; Ravi Bhuma</span>
+    </div>
+  </div>
+</section>
+
+<nav class="nav-section">
+  <div class="nav-grid">
+
+    <a href="setup.html" class="nav-card">
+      <span class="card-number">Module 01</span>
+      <span class="card-icon">&#9889;</span>
+      <h3>Quick-Start Setup</h3>
+      <p>Build a working embedded AI Assistant from scratch — HTML skeleton, embedding library, layout, initialization, and local Python server.</p>
+      <span class="card-tag tag-beginner">Beginner</span>
+    </a>
+
+    <a href="security.html" class="nav-card">
+      <span class="card-number">Module 02</span>
+      <span class="card-icon">&#128274;</span>
+      <h3>Security Deep-Dive</h3>
+      <p>Browser-based (session) vs. token-based authentication — IDCS confidential apps, OAuth 2.0 flows, token lifecycle, and production patterns.</p>
+      <span class="card-tag tag-advanced">Advanced</span>
+    </a>
+
+    <a href="exercises.html" class="nav-card">
+      <span class="card-number">Module 03</span>
+      <span class="card-icon">&#128736;</span>
+      <h3>Hands-On Exercises</h3>
+      <p>Step-by-step labs: embed the standalone AI Assistant, embed alongside a dashboard, test questions, and troubleshoot common errors.</p>
+      <span class="card-tag tag-intermediate">Intermediate</span>
+    </a>
+
+    <a href="reference.html" class="nav-card">
+      <span class="card-number">Module 04</span>
+      <span class="card-icon">&#128209;</span>
+      <h3>Reference &amp; Resources</h3>
+      <p>Complete code listings, Python local server setup, troubleshooting table, architecture diagrams, and links to Oracle documentation.</p>
+      <span class="card-tag tag-reference">Reference</span>
+    </a>
+
+  </div>
+</nav>
+
+<section class="section">
+  <div class="section-label">Why Embed?</div>
+  <h2>Advantages of Embedding the AI Assistant</h2>
+  <p>The Oracle Analytics Cloud AI Assistant enables users to ask natural-language questions and generate visualized insights on the fly. Embedding it into your own HTML pages unlocks powerful use cases that go far beyond the default OAC console experience.</p>
+
+  <div class="advantages-grid">
+    <div class="advantage-item">
+      <div class="icon">&#127760;</div>
+      <h4>Unified User Experience</h4>
+      <p>Bring conversational analytics directly into your portal, intranet, or custom app — users never leave your branded interface.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128101;</div>
+      <h4>Non-Technical Access</h4>
+      <p>Business users explore data through natural language without learning OAC navigation. Adoption goes up, training costs go down.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128200;</div>
+      <h4>Dashboard + AI Side-by-Side</h4>
+      <p>Embed the Assistant alongside dashboards so users can ask follow-up questions about what they see in charts and tables.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128274;</div>
+      <h4>Governed &amp; Secure</h4>
+      <p>OAC's role-based security, row-level security, and semantic-layer governance apply to every embedded query.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#9889;</div>
+      <h4>Zero Frameworks Needed</h4>
+      <p>A single HTML file, one script tag, and one custom element. No React, no build tools, no npm — just a browser.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128273;</div>
+      <h4>Flexible Authentication</h4>
+      <p>Choose browser-based SSO for internal apps, or token-based auth for public-facing sites — both are fully supported.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label">Real-World Patterns</div>
+  <h2>How Organizations Use the Embedded AI Assistant</h2>
+  <p>The embedded AI Assistant is not just a standalone chat window — it becomes part of your application's user experience. Here are the patterns demonstrated in the <a href="https://youtu.be/q1ux-pytE6o?si=ZkLSedZv-_e0WPf0" target="_blank">official demo video</a>:</p>
+
+  <div class="advantages-grid" style="grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));">
+    <div class="advantage-item">
+      <div class="icon">&#128172;</div>
+      <h4>Standalone AI Assistant</h4>
+      <p>Embed the Assistant as a full-page experience — users interact with a clean conversational interface connected to a specific dataset. Ideal for focused data exploration without dashboard clutter.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128202;</div>
+      <h4>Assistant Next to a Dashboard</h4>
+      <p>Place the AI Assistant alongside an embedded OAC canvas. Users view charts and tables on one side and ask follow-up questions on the other — no context-switching between screens.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#9881;</div>
+      <h4>Dynamic Dataset Selector</h4>
+      <p>Build a custom app that lets users search and select different datasets, then dynamically bind the Assistant to the chosen data. This turns the Assistant into a flexible data exploration tool across multiple sources.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128230;</div>
+      <h4>Embedded in Line-of-Business Apps</h4>
+      <p>Integrate the Assistant directly into operational applications — inventory trackers, order management portals, supply chain dashboards — so users ask analytical questions without leaving their workflow.</p>
+    </div>
+  </div>
+
+  <div class="callout callout-info" style="margin-top: 1.5rem;">
+    <span class="callout-icon">&#127909;</span>
+    <div><strong>See it in action:</strong> Watch the <a href="https://youtu.be/q1ux-pytE6o?si=ZkLSedZv-_e0WPf0" target="_blank">2-minute demo video</a> showing all four patterns — from a standalone assistant to a fully integrated custom application with dynamic dataset switching and side-by-side analytics.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label">Architecture</div>
+  <h2>How Embedding Works</h2>
+  <p>The embedding framework relies on four components working together. Remove any one of them and the AI Assistant will not render.</p>
+
+  <div class="arch-diagram" id="interactive-flow">
+    <div class="flow-tabs">
+      <button class="flow-tab active" onclick="showFlow('embedding')">Embedding Flow</button>
+      <button class="flow-tab" onclick="showFlow('browser')">Browser Auth</button>
+      <button class="flow-tab" onclick="showFlow('token')">Token Auth</button>
+    </div>
+
+    <!-- Embedding Flow -->
+    <div class="flow-panel active" id="flow-embedding">
+      <div class="flow-title">How the Four Components Connect</div>
+      <div class="interactive-flow">
+        <div class="iflow-step" data-step="1" onclick="activateStep(this)">
+          <div class="iflow-num">1</div>
+          <div class="iflow-icon">&#128220;</div>
+          <div class="iflow-label">embedding.js</div>
+          <div class="iflow-sub">Loaded in &lt;head&gt;</div>
+        </div>
+        <div class="iflow-connector"><svg viewBox="0 0 40 20"><path d="M0 10 L30 10 L24 4 M30 10 L24 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
+        <div class="iflow-step" data-step="2" onclick="activateStep(this)">
+          <div class="iflow-num">2</div>
+          <div class="iflow-icon">&#127912;</div>
+          <div class="iflow-label">CSS Layout</div>
+          <div class="iflow-sub">Full viewport</div>
+        </div>
+        <div class="iflow-connector"><svg viewBox="0 0 40 20"><path d="M0 10 L30 10 L24 4 M30 10 L24 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
+        <div class="iflow-step" data-step="3" onclick="activateStep(this)">
+          <div class="iflow-num">3</div>
+          <div class="iflow-icon">&#129302;</div>
+          <div class="iflow-label">&lt;oracle-analytics-assistant&gt;</div>
+          <div class="iflow-sub">Data binding</div>
+        </div>
+        <div class="iflow-connector"><svg viewBox="0 0 40 20"><path d="M0 10 L30 10 L24 4 M30 10 L24 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
+        <div class="iflow-step" data-step="4" onclick="activateStep(this)">
+          <div class="iflow-num">4</div>
+          <div class="iflow-icon">&#9889;</div>
+          <div class="iflow-label">applyBindings()</div>
+          <div class="iflow-sub">Initialization</div>
+        </div>
+      </div>
+      <div class="iflow-detail" id="detail-embedding">
+        <div class="iflow-detail-content" data-step="1">
+          <strong>Step 1 — Load the Engine:</strong> The <code>&lt;script&gt;</code> tag in <code>&lt;head&gt;</code> pulls the OAC embedding library from your instance. This file contains everything needed to render OAC components — do not download it locally.
+        </div>
+        <div class="iflow-detail-content" data-step="2" style="display:none;">
+          <strong>Step 2 — Layout:</strong> CSS removes default margins and stretches the assistant to fill the viewport. Without this, the component may collapse to zero height or create double scrollbars.
+        </div>
+        <div class="iflow-detail-content" data-step="3" style="display:none;">
+          <strong>Step 3 — Declare the Component:</strong> The custom element <code>&lt;oracle-analytics-assistant&gt;</code> tells OAC where to render. The <code>src-data</code> attribute specifies which dataset the AI Assistant connects to.
+        </div>
+        <div class="iflow-detail-content" data-step="4" style="display:none;">
+          <strong>Step 4 — Activate:</strong> <code>applyBindings()</code> scans the DOM, finds all OAC elements, and wires them up. This must run <em>after</em> the component tags exist in the page.
+        </div>
+      </div>
+    </div>
+
+    <!-- Browser Auth Flow -->
+    <div class="flow-panel" id="flow-browser">
+      <div class="flow-title">Browser-Based (Session) Authentication</div>
+      <div class="interactive-flow vertical">
+        <div class="iflow-step wide" data-step="1" onclick="activateStep(this)">
+          <div class="iflow-num">1</div>
+          <div class="iflow-icon">&#128100;</div>
+          <div class="iflow-label">User Logs into OAC</div>
+          <div class="iflow-sub">Via direct login or SSO</div>
+        </div>
+        <div class="iflow-connector-v"><svg viewBox="0 0 20 30"><path d="M10 0 L10 22 L5 16 M10 22 L15 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
+        <div class="iflow-step wide" data-step="2" onclick="activateStep(this)">
+          <div class="iflow-num">2</div>
+          <div class="iflow-icon">&#127850;</div>
+          <div class="iflow-label">Session Cookie Set</div>
+          <div class="iflow-sub">Browser stores OAC auth cookie</div>
+        </div>
+        <div class="iflow-connector-v"><svg viewBox="0 0 20 30"><path d="M10 0 L10 22 L5 16 M10 22 L15 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
+        <div class="iflow-step wide" data-step="3" onclick="activateStep(this)">
+          <div class="iflow-num">3</div>
+          <div class="iflow-icon">&#127760;</div>
+          <div class="iflow-label">User Opens Embedded Page</div>
+          <div class="iflow-sub">embedding.js loads and detects cookie</div>
+        </div>
+        <div class="iflow-connector-v"><svg viewBox="0 0 20 30"><path d="M10 0 L10 22 L5 16 M10 22 L15 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
+        <div class="iflow-step wide" data-step="4" onclick="activateStep(this)">
+          <div class="iflow-num">4</div>
+          <div class="iflow-icon">&#9989;</div>
+          <div class="iflow-label">OAC Validates Session</div>
+          <div class="iflow-sub">AI Assistant renders with user's identity</div>
+        </div>
+      </div>
+      <div class="iflow-detail" id="detail-browser">
+        <div class="iflow-detail-content" data-step="1">
+          <strong>Login:</strong> The user authenticates to OAC through the browser — either directly or via SSO (Azure AD, Okta, ADFS + IDCS). This establishes an authenticated session.
+        </div>
+        <div class="iflow-detail-content" data-step="2" style="display:none;">
+          <strong>Cookie:</strong> IDCS sets a session cookie in the browser. This cookie is shared across all tabs in the same browser profile and domain context.
+        </div>
+        <div class="iflow-detail-content" data-step="3" style="display:none;">
+          <strong>Embedded Page:</strong> When the user visits your embedded page, the embedding framework automatically includes the session cookie with its API calls back to OAC. No extra code needed.
+        </div>
+        <div class="iflow-detail-content" data-step="4" style="display:none;">
+          <strong>Validation:</strong> OAC verifies the session and renders the AI Assistant under the user's identity — applying their specific role-based and row-level security rules.
+        </div>
+      </div>
+    </div>
+
+    <!-- Token Auth Flow -->
+    <div class="flow-panel" id="flow-token">
+      <div class="flow-title">Token-Based (OAuth 2.0) Authentication</div>
+      <div class="interactive-flow vertical">
+        <div class="iflow-step wide" data-step="1" onclick="activateStep(this)">
+          <div class="iflow-num">1</div>
+          <div class="iflow-icon">&#127760;</div>
+          <div class="iflow-label">User Visits Embedded Page</div>
+          <div class="iflow-sub">No OAC login required</div>
+        </div>
+        <div class="iflow-connector-v"><svg viewBox="0 0 20 30"><path d="M10 0 L10 22 L5 16 M10 22 L15 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
+        <div class="iflow-step wide" data-step="2" onclick="activateStep(this)">
+          <div class="iflow-num">2</div>
+          <div class="iflow-icon">&#9881;</div>
+          <div class="iflow-label">Server Calls IDCS Token API</div>
+          <div class="iflow-sub">Client ID + Secret + Service Account</div>
+        </div>
+        <div class="iflow-connector-v"><svg viewBox="0 0 20 30"><path d="M10 0 L10 22 L5 16 M10 22 L15 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
+        <div class="iflow-step wide" data-step="3" onclick="activateStep(this)">
+          <div class="iflow-num">3</div>
+          <div class="iflow-icon">&#128273;</div>
+          <div class="iflow-label">Bearer Token Returned</div>
+          <div class="iflow-sub">Injected via setEmbeddingConfig()</div>
+        </div>
+        <div class="iflow-connector-v"><svg viewBox="0 0 20 30"><path d="M10 0 L10 22 L5 16 M10 22 L15 16" stroke="currentColor" fill="none" stroke-width="2"/></svg></div>
+        <div class="iflow-step wide" data-step="4" onclick="activateStep(this)">
+          <div class="iflow-num">4</div>
+          <div class="iflow-icon">&#9989;</div>
+          <div class="iflow-label">OAC Validates Token</div>
+          <div class="iflow-sub">AI Assistant renders — no cookies needed</div>
+        </div>
+      </div>
+      <div class="iflow-detail" id="detail-token">
+        <div class="iflow-detail-content" data-step="1">
+          <strong>No Login:</strong> The user simply opens the page. Unlike browser-based auth, they don't need an OAC account or an active OAC session.
+        </div>
+        <div class="iflow-detail-content" data-step="2" style="display:none;">
+          <strong>Server-Side Token Request:</strong> Your backend calls the IDCS <code>/oauth2/v1/token</code> endpoint using the confidential app's Client ID/Secret and a service account. Credentials never reach the browser.
+        </div>
+        <div class="iflow-detail-content" data-step="3" style="display:none;">
+          <strong>Token Injection:</strong> The access token is passed to <code>setEmbeddingConfig()</code> with <code>eSecurityType: "token"</code>. The embedding framework uses this token for all subsequent API calls to OAC.
+        </div>
+        <div class="iflow-detail-content" data-step="4" style="display:none;">
+          <strong>Cookieless Auth:</strong> OAC validates the bearer token and renders the Assistant. No session cookies are created — eliminating third-party cookie issues entirely. Token refresh happens server-side.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showFlow(name) {
+      document.querySelectorAll('.flow-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.flow-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('flow-' + name).classList.add('active');
+      event.target.classList.add('active');
+    }
+    function activateStep(el) {
+      const step = el.getAttribute('data-step');
+      const panel = el.closest('.flow-panel');
+      panel.querySelectorAll('.iflow-step').forEach(s => s.classList.remove('active'));
+      el.classList.add('active');
+      const detailBox = panel.querySelector('.iflow-detail');
+      detailBox.querySelectorAll('.iflow-detail-content').forEach(d => d.style.display = 'none');
+      const target = detailBox.querySelector('.iflow-detail-content[data-step="'+step+'"]');
+      if (target) target.style.display = 'block';
+    }
+    // Auto-activate first step on load
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.flow-panel .iflow-step[data-step="1"]').forEach(s => s.classList.add('active'));
+    });
+  </script>
+
+  <div class="section-label" style="margin-top:2rem;">Authentication Models</div>
+  <h2>Session-Based vs. Token-Based</h2>
+  <p>Oracle Analytics supports two authentication models for embedded content. Understanding when to use each is critical for production deployments.</p>
+
+  <table class="comparison-table">
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>Browser / Session-Based</th>
+        <th>Token-Based (OAuth 2.0)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>How it works</strong></td>
+        <td>User authenticates to OAC via browser; session cookie is shared with the embedded page.</td>
+        <td>A bearer token (from IDCS/IAM) is injected via JavaScript; no browser login required.</td>
+      </tr>
+      <tr>
+        <td><strong>User login required?</strong></td>
+        <td>Yes — user must be logged into OAC in another tab (or SSO handles it).</td>
+        <td>No — the token is obtained server-side and passed to the page.</td>
+      </tr>
+      <tr>
+        <td><strong>Third-party cookie issue?</strong></td>
+        <td>Possible — browsers that block 3rd-party cookies may break the session.</td>
+        <td>None — no session cookies are created on the client.</td>
+      </tr>
+      <tr>
+        <td><strong>Best for</strong></td>
+        <td>Internal portals where users already have OAC accounts and SSO.</td>
+        <td>Public-facing sites, kiosks, portals with non-OAC users.</td>
+      </tr>
+      <tr>
+        <td><strong>Security model</strong></td>
+        <td>OAC session + IDCS SSO policies.</td>
+        <td>OAuth 2.0 bearer token + IDCS confidential app + scoped permissions.</td>
+      </tr>
+      <tr>
+        <td><strong>Complexity</strong></td>
+        <td>Low — no extra server-side code.</td>
+        <td>Medium-to-High — requires IDCS app setup, token generation, refresh logic.</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section">
+  <div class="section-label">Prerequisites</div>
+  <h2>Before You Begin</h2>
+  <p>Confirm you have the following items ready before starting the workshop modules.</p>
+  <div class="advantages-grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));">
+    <div class="advantage-item">
+      <div class="icon">&#127758;</div>
+      <h4>OAC Instance</h4>
+      <p>Oracle Analytics Cloud instance with the AI Assistant and embedding framework available (March 2026 or later recommended).</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128187;</div>
+      <h4>Browser</h4>
+      <p>Google Chrome recommended. DevTools (F12) will be used for debugging.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128013;</div>
+      <h4>Python 3.x</h4>
+      <p>Any Python 3 version — used only to run a one-line local web server. No Python knowledge required.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#9998;</div>
+      <h4>Text Editor</h4>
+      <p>VS Code, Notepad++, Sublime, or even plain Notepad. Anything that can save a .html file.</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128100;</div>
+      <h4>OAC Permissions</h4>
+      <p>User must have the <em>Use Assistant in Workbooks</em> permission (included in DV Content Author role by default).</p>
+    </div>
+    <div class="advantage-item">
+      <div class="icon">&#128451;</div>
+      <h4>Data Source</h4>
+      <p>A dataset or subject area available in your OAC instance for the Assistant to query.</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>Oracle Analytics Cloud AI Assistant Embedding Workshop &mdash; Ravi Bhuma</p>
+  <p style="margin-top:0.5rem;">
+    <a href="https://blogs.oracle.com/analytics/embedding-the-oracle-analytics-cloud-ai-assistant-into-a-custom-html-page" target="_blank">Blog Post</a> &middot;
+    <a href="https://docs.oracle.com/en/cloud/paas/analytics-cloud/acubi/oracle-analytics-ai-assistant.html" target="_blank">OAC AI Assistant Docs</a> &middot;
+    <a href="https://docs.oracle.com/en/cloud/paas/analytics-cloud/acsdv/use-token-authentication-embedded-oracle-analytics-cloud-content.html" target="_blank">Token Auth Docs</a>
+  </p>
+</footer>
+
+</body>
+</html>

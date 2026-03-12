@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 03: Hands-On Exercises — OAC AI Assistant Embedding</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg-primary:#0a0e1a;--bg-secondary:#111827;--bg-card:#1a2236;--bg-card-hover:#1f2a42;--accent-oracle:#c74634;--accent-gold:#f59e0b;--accent-blue:#3b82f6;--accent-green:#10b981;--accent-purple:#8b5cf6;--accent-cyan:#06b6d4;--text-primary:#f1f5f9;--text-secondary:#94a3b8;--text-muted:#64748b;--border:#1e293b;--border-accent:#334155;--code-bg:#0f172a;--font-body:'Plus Jakarta Sans',sans-serif;--font-mono:'JetBrains Mono',monospace}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}body{font-family:var(--font-body);background:var(--bg-primary);color:var(--text-primary);line-height:1.7}a{color:var(--accent-blue);text-decoration:none;transition:color .2s}a:hover{color:var(--accent-cyan)}
+.topnav{position:sticky;top:0;z-index:100;background:rgba(10,14,26,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:.75rem 2rem;display:flex;align-items:center;justify-content:space-between}.topnav-brand{font-weight:700;font-size:.9rem;color:var(--text-primary)}.topnav-brand span{color:var(--accent-oracle)}.topnav-links{display:flex;gap:1.5rem;font-size:.82rem}.topnav-links a{color:var(--text-muted)}.topnav-links a:hover{color:var(--text-primary)}.topnav-links a.active{color:var(--accent-oracle)}
+.page-header{padding:3rem 2rem 2rem;max-width:900px;margin:0 auto}.page-header .module-label{font-family:var(--font-mono);font-size:.7rem;color:var(--accent-oracle);text-transform:uppercase;letter-spacing:.12em;margin-bottom:.5rem}.page-header h1{font-size:clamp(1.8rem,4vw,2.6rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.75rem}.page-header .subtitle{font-size:1rem;color:var(--text-secondary);max-width:700px}
+.content{max-width:900px;margin:0 auto;padding:0 2rem 4rem}
+h2{font-size:1.4rem;font-weight:700;margin:2.5rem 0 1rem;padding-top:1.5rem;border-top:1px solid var(--border)}h3{font-size:1.1rem;font-weight:700;margin:1.5rem 0 .75rem}p,li{font-size:.92rem;color:var(--text-secondary);margin-bottom:.6rem}ul,ol{padding-left:1.5rem;margin-bottom:1rem}
+pre{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;padding:1.25rem 1.5rem;overflow-x:auto;margin:1rem 0;font-family:var(--font-mono);font-size:.82rem;line-height:1.7;color:#e2e8f0}pre .comment{color:#64748b}pre .tag{color:#f472b6}pre .attr{color:#a78bfa}pre .string{color:#34d399}pre .keyword{color:#60a5fa}
+code{font-family:var(--font-mono);font-size:.84em;background:var(--code-bg);border:1px solid var(--border);padding:.15rem .4rem;border-radius:4px}pre code{background:none;border:none;padding:0}
+.callout{border-radius:10px;padding:1rem 1.25rem;margin:1rem 0;font-size:.88rem;line-height:1.6;display:flex;gap:.75rem}.callout-icon{font-size:1.1rem;flex-shrink:0;margin-top:.1rem}.callout-info{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.2);color:#93c5fd}.callout-warn{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);color:#fcd34d}.callout-success{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);color:#6ee7b7}.callout-danger{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+
+.lab-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin:1.5rem 0}.lab-card h3{margin-top:0}.lab-badge{display:inline-block;padding:.15rem .5rem;border-radius:5px;font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.05em;margin-bottom:.75rem}.lab-badge.green{background:rgba(16,185,129,.15);color:var(--accent-green)}.lab-badge.gold{background:rgba(245,158,11,.15);color:var(--accent-gold)}.lab-badge.red{background:rgba(199,70,52,.15);color:var(--accent-oracle)}
+
+.pagination{display:flex;justify-content:space-between;padding:2rem 0;border-top:1px solid var(--border);margin-top:2rem}.pagination a{display:flex;flex-direction:column;gap:.2rem;padding:.75rem 1.25rem;border:1px solid var(--border);border-radius:10px;transition:all .2s;font-size:.85rem}.pagination a:hover{border-color:var(--border-accent);background:var(--bg-card)}.pagination a small{font-size:.7rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:.08em}
+footer{text-align:center;padding:2rem;border-top:1px solid var(--border);color:var(--text-muted);font-size:.78rem}
+@media(max-width:768px){.topnav{padding:.75rem 1rem}.topnav-links{gap:.75rem;font-size:.75rem}.page-header,.content{padding-left:1.5rem;padding-right:1.5rem}}
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <a href="index.html" class="topnav-brand"><span>OAC</span> Embedding Workshop</a>
+  <div class="topnav-links">
+    <a href="setup.html">Setup</a>
+    <a href="security.html">Security</a>
+    <a href="exercises.html" class="active">Exercises</a>
+    <a href="reference.html">Reference</a>
+  </div>
+</nav>
+
+<header class="page-header">
+  <div class="module-label">Module 03</div>
+  <h1>Hands-On Exercises</h1>
+  <p class="subtitle">Three guided labs — from standalone AI Assistant embedding to side-by-side dashboard + assistant and token-based authentication testing.</p>
+</header>
+
+<main class="content">
+
+<!-- LAB 1 -->
+<div class="lab-card" id="lab1">
+  <span class="lab-badge green">Lab 1 — Beginner</span>
+  <h3>Embed the Standalone AI Assistant</h3>
+  <p>Build a single HTML file that loads the OAC AI Assistant full-screen, using browser-based authentication.</p>
+</div>
+
+<h3>Your Configuration Values</h3>
+<p>These values will be used throughout the labs. Replace them with your own environment details:</p>
+<pre><code>OAC Instance URL:   https://&lt;your-oac-host&gt;.analytics.ocp.oraclecloud.com
+OAC User:           your.name@company.com
+Dataset Name:       Your_Dataset_Name
+Local Test Port:    8000</code></pre>
+
+<h3>Instructions</h3>
+<ol>
+  <li>Create a new folder on your desktop called <code>oac-workshop</code>.</li>
+  <li>Using your text editor, create a file named <code>oac-ai-assistant.html</code> and build it following the six steps from <a href="setup.html">Module 01: Quick-Start Setup (setup.html)</a>.</li>
+  <li>Open a terminal, navigate to the folder, and start the Python server:
+<pre><code><span class="comment"># Windows:</span>
+cd C:\Users\YourName\Desktop\oac-workshop
+python -m http.server 8000
+
+<span class="comment"># macOS / Linux:</span>
+cd ~/Desktop/oac-workshop
+python3 -m http.server 8000</code></pre>
+  </li>
+  <li>In OAC, add <code>http://localhost:8000</code> to <strong>Safe Domains</strong> (Administration &#8594; Safe Domains &#8594; Add Domain &#8594; check Embedding).</li>
+  <li>Open Chrome and navigate to <code>http://localhost:8000/oac-ai-assistant.html</code>.</li>
+  <li>In a separate tab, log into your OAC instance (this establishes the session cookie).</li>
+  <li>Return to your embedded page and refresh. The AI Assistant should appear.</li>
+</ol>
+
+<h3>Test Questions</h3>
+<p>Try asking the Assistant these questions to verify it's connected to your data:</p>
+<ul>
+  <li>"Show me a summary of the data"</li>
+  <li>"What are the top 5 values by revenue?"</li>
+  <li>"Show trends over time"</li>
+  <li>"Compare categories"</li>
+</ul>
+
+<div class="callout callout-success">
+  <span class="callout-icon">&#9989;</span>
+  <div><strong>Checkpoint:</strong> The AI Assistant responds to at least two questions with data-backed answers. If it says "no data found," verify the dataset name in <code>src-data</code> matches exactly and that you are logged into OAC.</div>
+</div>
+
+<!-- LAB 2 -->
+<div class="lab-card" id="lab2">
+  <span class="lab-badge gold">Lab 2 — Intermediate</span>
+  <h3>Embed Dashboard + AI Assistant Side-by-Side</h3>
+  <p>Create a split-screen layout with an OAC dashboard on the left and the AI Assistant on the right.</p>
+</div>
+
+<h3>Instructions</h3>
+<ol>
+  <li>Create a new file called <code>dashboard-assistant.html</code> in the same folder.</li>
+  <li>Use the following layout code as your starting point:</li>
+</ol>
+
+<pre><code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">dir</span>=<span class="string">"ltr"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="string">"utf-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;script</span>
+    <span class="attr">src</span>=<span class="string">"https://&lt;your-oac-host&gt;/public/dv/v2/embedding/auto/embedding.js"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/script&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    html, body { margin: 0; height: 100%; }
+    .container {
+      display: flex;
+      height: 100%;
+    }
+    .analytics {
+      flex: 2;
+      height: 100%;
+      border-right: 1px solid #ddd;
+    }
+    .assistant {
+      flex: 1;
+      height: 100%;
+      min-width: 360px;
+    }
+    oracle-dv, oracle-analytics-assistant {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"container"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"analytics"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;oracle-dv</span>
+        <span class="attr">project-path</span>=<span class="string">"&lt;your-project-path&gt;"</span>
+        <span class="attr">active-page</span>=<span class="string">"insight"</span>
+        <span class="attr">active-tab-id</span>=<span class="string">"snapshot!canvas!1"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;/oracle-dv&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="string">"assistant"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;oracle-analytics-assistant</span>
+        <span class="attr">id</span>=<span class="string">"oaAssistant"</span>
+        <span class="attr">src-data</span>=<span class="string">"[&amp;quot;XSA('user'.'dataset')&amp;quot;]"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;/oracle-analytics-assistant&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;script&gt;</span>
+    oracle.oa.embedding.ready().then(oApp =&gt; oApp.applyBindings());
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code></pre>
+
+<ol start="3">
+  <li>Replace <code>&lt;your-project-path&gt;</code> with the path to an OAC workbook (e.g., <code>/@Catalog/shared/MyDashboard</code>). You can find this in OAC under the workbook's <strong>Developer &#8594; Embed</strong> tab.</li>
+  <li>Replace the <code>src-data</code> values with your user and dataset name.</li>
+  <li>Serve and test the same way as Lab 1.</li>
+</ol>
+
+<div class="callout callout-info">
+  <span class="callout-icon">&#8505;&#65039;</span>
+  <div><strong>Why side-by-side?</strong> This pattern is powerful for enterprise analytics — users can see a dashboard and simultaneously ask the AI Assistant follow-up questions about the data they're viewing. It reduces context-switching and enables deeper exploration.</div>
+</div>
+
+<!-- LAB 3 -->
+<div class="lab-card" id="lab3">
+  <span class="lab-badge red">Lab 3 — Advanced</span>
+  <h3>Token-Based Authentication</h3>
+  <p>Modify your Lab 1 page to use a hardcoded token (for testing), simulating the production token-based flow.</p>
+</div>
+
+<h3>Instructions</h3>
+<ol>
+  <li>First, obtain a test token using curl (from <a href="security.html#token-auth">Module 02: Security Deep-Dive (security.html), Step B-4</a>):
+<pre><code>echo -n "&lt;Client-ID&gt;:&lt;Client-Secret&gt;" | base64
+
+curl --request POST \
+  --url https://&lt;IDCS-domain&gt;.identity.oraclecloud.com/oauth2/v1/token \
+  --header 'Authorization: Basic &lt;base64-string&gt;' \
+  --header 'Content-Type: application/x-www-form-urlencoded;charset=UTF-8' \
+  --data 'grant_type=password&amp;username=&lt;user&gt;&amp;password=&lt;pass&gt;&amp;scope=&lt;scope&gt;'</code></pre>
+  </li>
+  <li>Copy the <code>access_token</code> value from the JSON response.</li>
+  <li>Create a new file called <code>oac-token-auth.html</code> and copy your Lab 1 HTML into it.</li>
+  <li>Replace the initialization script with the token-based version:</li>
+</ol>
+
+<pre><code><span class="tag">&lt;script&gt;</span>
+  <span class="keyword">const</span> token = '<span class="string">paste-your-access-token-here</span>';
+
+  oracle.oa.embedding.ready().then((oApp) =&gt; {
+    oApp.setEmbeddingConfig({
+      oSecurityConfig: {
+        eSecurityType: <span class="string">"token"</span>,
+        oOptions: {
+          credentials: <span class="string">""</span>,
+          tokenAuthFunction: <span class="keyword">new</span> Function(<span class="string">"return '"</span> + token + <span class="string">"'"</span>)
+        }
+      }
+    });
+    oApp.applyBindings();
+  });
+<span class="tag">&lt;/script&gt;</span></code></pre>
+
+<ol start="5">
+  <li>Serve and open the page. This time, you should <strong>not</strong> need to be logged into OAC in a separate tab — the token handles authentication.</li>
+  <li>Test the Assistant with the same questions from Lab 1.</li>
+</ol>
+
+<div class="callout callout-warn">
+  <span class="callout-icon">&#9888;&#65039;</span>
+  <div><strong>Token expiry:</strong> The default OAC access token expires after 100 seconds. If the Assistant stops working, your token has likely expired — generate a fresh one with the curl command. In production, your server-side endpoint handles refresh automatically.</div>
+</div>
+
+<div class="callout callout-success">
+  <span class="callout-icon">&#9989;</span>
+  <div><strong>Checkpoint:</strong> The AI Assistant renders and responds to questions <strong>without you being logged into OAC</strong> in any browser tab. Open an incognito window to verify — the token alone should be sufficient for authentication.</div>
+</div>
+
+<!-- SETTING UP LOCAL PYTHON ENVIRONMENT -->
+<h2 id="python-setup">Setting Up a Local Python Environment</h2>
+<p>Here is a detailed guide to setting up a proper local development environment for testing your embedded HTML pages.</p>
+
+<h3>Option A: Minimal Setup (No Virtual Environment)</h3>
+<p>If you just need a quick server to test:</p>
+
+<p><strong>On Windows:</strong></p>
+<pre><code><span class="comment"># Check Python version</span>
+python --version
+
+<span class="comment"># Navigate to your project folder</span>
+cd C:\Users\YourName\Desktop\oac-workshop
+
+<span class="comment"># Start the HTTP server</span>
+python -m http.server 8000
+
+<span class="comment"># Server now running at http://localhost:8000</span>
+<span class="comment"># Press Ctrl+C to stop</span></code></pre>
+
+<p><strong>On macOS / Linux:</strong></p>
+<pre><code>python3 --version
+cd ~/Desktop/oac-workshop
+python3 -m http.server 8000</code></pre>
+
+<h3>Option B: Virtual Environment with Live Reload (Recommended)</h3>
+<p>A virtual environment keeps dependencies isolated and adds live-reload for faster iteration:</p>
+
+<p><strong>On Windows:</strong></p>
+<pre><code><span class="comment"># Navigate to your project folder</span>
+cd C:\Users\YourName\Desktop\oac-workshop
+
+<span class="comment"># Create a virtual environment</span>
+python -m venv .venv
+
+<span class="comment"># Activate it (Command Prompt):</span>
+.venv\Scripts\activate.bat
+<span class="comment"># Or (PowerShell):</span>
+.venv\Scripts\Activate.ps1
+
+<span class="comment"># Your prompt now shows (.venv) — you're in the virtual env</span>
+
+<span class="comment"># Install livereload for auto-refresh on file changes</span>
+pip install livereload
+
+<span class="comment"># Start the live-reload server</span>
+livereload --port 8000 .
+
+<span class="comment"># To deactivate when done:</span>
+deactivate</code></pre>
+
+<p><strong>On macOS / Linux:</strong></p>
+<pre><code>cd ~/Desktop/oac-workshop
+python3 -m venv .venv
+source .venv/bin/activate
+pip install livereload
+livereload --port 8000 .
+deactivate</code></pre>
+
+<h3>Option C: HTTPS Local Server (For Testing Token Auth)</h3>
+<p>Some production token flows require HTTPS. You can use a self-signed certificate (macOS/Linux, or Windows with Git Bash):</p>
+<pre><code><span class="comment"># Generate a self-signed certificate</span>
+openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem \
+  -days 365 -nodes -subj "/CN=localhost"
+
+<span class="comment"># Start an HTTPS server with Python</span>
+<span class="comment"># Windows: use "python" instead of "python3"</span>
+python3 -c "
+import ssl, http.server
+ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+ctx.load_cert_chain('cert.pem', 'key.pem')
+srv = http.server.HTTPServer(('localhost', 8443), http.server.SimpleHTTPRequestHandler)
+srv.socket = ctx.wrap_socket(srv.socket, server_side=True)
+print('Serving HTTPS on https://localhost:8443')
+srv.serve_forever()
+"
+
+<span class="comment"># Add https://localhost:8443 to OAC Safe Domains</span>
+<span class="comment"># Browser will show a certificate warning — click "Advanced" then "Proceed"</span></code></pre>
+
+<h3>Project Folder Structure</h3>
+<pre><code>oac-workshop/
+  .venv/                    <span class="comment"># Virtual environment (don't commit to git)</span>
+  oac-ai-assistant.html     <span class="comment"># Lab 1: Standalone AI Assistant</span>
+  dashboard-assistant.html  <span class="comment"># Lab 2: Dashboard + Assistant</span>
+  oac-token-auth.html       <span class="comment"># Lab 3: Token-based auth</span>
+  cert.pem                  <span class="comment"># (Optional) Self-signed cert for HTTPS</span>
+  key.pem                   <span class="comment"># (Optional) Private key for HTTPS</span></code></pre>
+
+<div class="callout callout-info">
+  <span class="callout-icon">&#8505;&#65039;</span>
+  <div><strong>VS Code users:</strong> Install the "Live Server" extension for one-click serving. Default port is 5500. Remember to add <code>http://localhost:5500</code> to OAC Safe Domains instead of port 8000.</div>
+</div>
+
+<div class="pagination">
+  <a href="security.html">
+    <small>&#8592; Previous</small>
+    <span>Security Deep-Dive</span>
+  </a>
+  <a href="reference.html" style="text-align:right;">
+    <small>Next &#8594;</small>
+    <span>Reference &amp; Resources</span>
+  </a>
+</div>
+
+</main>
+
+<footer>
+  OAC AI Assistant Embedding Workshop &mdash; Ravi Bhuma
+</footer>
+
+</body>
+</html>
